@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/gfx">
+        <file>Images/explotion.png</file>
+        <file>Images/Fondo.jfif</file>
+        <file>Images/rexplotion.png</file>
+        <file>Images/tabla.png</file>
+        <file>Images/wtabla.png</file>
+    </qresource>
+</RCC>
