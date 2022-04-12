@@ -11,14 +11,17 @@ CONFIG += c++11
 SOURCES += \
     fmanager.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    registerwindow.cpp
 
 HEADERS += \
     fmanager.h \
-    mainwindow.h
+    mainwindow.h \
+    registerwindow.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    registerwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
