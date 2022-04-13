@@ -87,21 +87,53 @@ bool registerwindow::loginUser(std::string UserName_, std::string UserPass_)
     return true;
 }
 
-bool registerwindow::registerUser(std::string UserName_, std::string Pass_, std::string Mail_)
+bool registerwindow::registerUser(std::string UserName_, std::string UserPass_, std::string Mail_)
 {
-    return 0;
-    // .find() -> Map on key pos | ->second -> Data of the key | .first -> first array of the std::pair | [2] -> second element from the std::string array
+    ui->UsedName->hide();
+    ui->UsedMail->hide();
+    ui->UsedMail->setText("Correo en uso");
 
+    if(UserName_ == "" || UserPass_ == "" || Mail_ == ""){
+        ui->UsedMail->setText("Datos invalidos");
+        ui->UsedMail->show();
+        return false;
+    }
+
+    if((m_usersData.count(UserName_ + UserPass_) != 0)){
+        uint flag = 0;
+        for(auto _user : this->m_usersData){
+            if(_user.second.first[0] == UserName_){
+                ui->UsedName->show();
+                flag++;
+            }
+            if(_user.second.first[2] == Mail_){
+                ui->UsedMail->show();
+                flag++;
+            }
+            if(flag == 2)
+                return false;
+        }
+        return false;
+    }
+
+    for(auto _user : this->m_usersData){
+        if(_user.second.first[0] == UserName_){
+            ui->UsedName->show();
+            return false;
+        }
+        if(_user.second.first[2] == Mail_){
+            ui->UsedMail->show();
+            return false;
+        }
+    }
+    return true;
 }
+
 
 void registerwindow::on_Continue_clicked()
 {
-
-    ui->WrongUser->hide();
-    ui->WrongPass->hide();
-
     if(m_mode){
-        while(!loginUser(ui->namebox->text().toStdString(), ui->passbox->text().toStdString())){
+        if(!loginUser(ui->namebox->text().toStdString(), ui->passbox->text().toStdString())){
             ui->namebox->clear();
             ui->passbox->clear();
             return;
@@ -112,10 +144,30 @@ void registerwindow::on_Continue_clicked()
 
     }
 
-    while(!registerUser(ui->namebox->text().toStdString(), ui->passbox->text().toStdString(), ui->mailbox->text().toStdString())){
+    else{
+        if(!registerUser(ui->namebox->text().toStdString(), ui->passbox->text().toStdString(), ui->mailbox->text().toStdString())){
+            ui->mailbox->clear();
+            ui->namebox->clear();
+            ui->passbox->clear();
+            return;
+        }
+        m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()]
+                = gvr::udpair({ui->namebox->text().toStdString(),
+                                      ui->passbox->text().toStdString(),
+                                      ui->mailbox->text().toStdString()},
+                                      {1,0,0});
 
+        m_fmanager->appendFileData(
+                        ui->namebox->text().toStdString() + ui->passbox->text().toStdString() + ";" +
+                        ui->namebox->text().toStdString() + ";" +
+                        ui->passbox->text().toStdString() + ";" +
+                        ui->mailbox->text().toStdString() + ";" +
+                        "1;0;0");
+
+        gw = new gamewindow(m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()], this);
+        gw->show();
+        this->hide();
     }
-
     //m_gameWindow = new gamewindow();
 
 }

@@ -32,6 +32,49 @@ void fmanager::newFileData(const std::vector<std::string> &Data_)
     return;
 }
 
+void fmanager::overrideFileData(std::vector<std::string> NewData_)
+{
+    std::ofstream _File;
+    _File.open(m_File, std::ios::out);
+    for(auto _data : NewData_)
+        _File << _data + "\n";
+    return;
+}
+
+void fmanager::overrideFileData(std::string NewData_)
+{
+    std::ofstream _File;
+    _File.open(m_File, std::ios::out);
+    _File << NewData_ + "\n";
+    return;
+}
+
+void fmanager::appendFileData(std::vector<std::string> NewData_)
+{
+    std::ofstream _File;
+    _File.open(m_File, std::ios::app);
+    while(!_File.eof());
+    for(auto _data : NewData_)
+        _File << _data + "\n";
+    return;
+}
+
+void fmanager::appendFileData(std::string NewData_)
+{
+    std::ofstream _File;
+    _File.open(m_File, std::ios::app);
+    _File << NewData_ + "\n";
+    return;
+}
+
+void fmanager::deleteFileData()
+{
+    std::ofstream _File;
+    _File.open(m_File, std::ios::out);
+    _File << "\0";
+    return;
+}
+
 void fmanager::readFile()
 {
     std::ifstream _File;
