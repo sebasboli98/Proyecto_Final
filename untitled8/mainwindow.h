@@ -4,8 +4,7 @@
 #include <QMainWindow>
 #include <QKeyEvent>
 
-#include "fmanager.h"
-
+#include "registerwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,8 +26,7 @@ private slots:
 public:
     Ui::MainWindow *ui;
 
-    fmanager *m_fmanager;
-
+    registerwindow *m_rwindow;
 
 private:
     static MainWindow *P_game;

@@ -1,14 +1,14 @@
 #include "fmanager.h"
 
 fmanager::fmanager(const std::string& File_)
-    : m_File(File_), m_Data(), m_NFData("")
+    : m_File(File_), m_Data(), m_NFData()
 {
-    readFile();
     return;
 }
 
 std::vector<std::string> fmanager::getFileData()
 {
+    readFile();
     return m_Data;
 }
 
@@ -22,11 +22,11 @@ void fmanager::setFileData(const std::vector<std::string> &NewData_)
 void fmanager::changeFile(const std::string &NewFile_)
 {
     m_File = NewFile_;
-    readFile();
+    m_Data = {};
     return;
 }
 
-void fmanager::newFileData(const std::string &Data_)
+void fmanager::newFileData(const std::vector<std::string> &Data_)
 {
     m_NFData = Data_;
     return;
@@ -35,14 +35,16 @@ void fmanager::newFileData(const std::string &Data_)
 void fmanager::readFile()
 {
     std::ifstream _File;
-    _File.open( this->m_File , std::ios::in);
+    _File.open(this->m_File, std::ios::in);
     if(_File.fail()){
         qDebug() << QString("Archivo no encontrado.");
         _File.close();
 
         std::ofstream Temp;
-        Temp.open( this->m_File , std::ios::out);
-        Temp << this->m_NFData + "\n";
+        Temp.open(this->m_File, std::ios::out);
+        for(auto _data : this->m_NFData){
+            Temp << _data + "\n";
+        }
         Temp.close();
 
         /*for(int i = 0, j = 0; i < this->m_NFData.length(); i++){
@@ -54,9 +56,9 @@ void fmanager::readFile()
             m_Data[j] += this->m_NFData[i];
         }*/ /// Updates the Data array with the new info in file
 
-        _File.open( this->m_File , std::ios::in);
-        if(_File.fail());
-           // exit(-404);
+        _File.open(this->m_File, std::ios::in);
+        if(_File.fail())
+            exit(-404);
     }
     {
         std::string Temp;
@@ -71,7 +73,7 @@ void fmanager::readFile()
 void fmanager::writeFile()
 {
     std::ofstream _File;
-    _File.open("../VolatileRush/Files/" + this->m_File + ".txt", std::ios::out);
+    _File.open(this->m_File, std::ios::out);
 
     for(std::string s : this->m_Data){
         _File << s + "\n";

@@ -17,7 +17,7 @@ public:
 
     void changeFile(const std::string&);
 
-    void newFileData(const std::string&);
+    void newFileData(const std::vector<std::string>&);
 
 private:
     void readFile();
@@ -28,7 +28,7 @@ public:
 private:
     std::string m_File;
     std::vector<std::string> m_Data;
-    std::string m_NFData;
+    std::vector<std::string> m_NFData;
 
 };
 

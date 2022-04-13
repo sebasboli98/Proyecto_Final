@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    m_fmanager = new fmanager("Config");
 }
 
 MainWindow::~MainWindow()
@@ -19,12 +18,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_Login_clicked()
 {
-
+    m_rwindow = new registerwindow(true, this);
+    m_rwindow->show();
+    this->hide();
 }
 
 
 void MainWindow::on_Signin_clicked()
 {
-
+    m_rwindow = new registerwindow(false, this);
+    m_rwindow->show();
+    this->hide();
 }
 

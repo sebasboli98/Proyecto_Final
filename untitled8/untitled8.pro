@@ -10,16 +10,20 @@ CONFIG += c++11
 
 SOURCES += \
     fmanager.cpp \
+    gamewindow.cpp \
     main.cpp \
     mainwindow.cpp \
     registerwindow.cpp
 
 HEADERS += \
     fmanager.h \
+    gamewindow.h \
     mainwindow.h \
-    registerwindow.h
+    registerwindow.h \
+    utilities.h
 
 FORMS += \
+    gamewindow.ui \
     mainwindow.ui \
     registerwindow.ui
 
