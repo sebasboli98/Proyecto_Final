@@ -1,0 +1,11 @@
+release/block.o
+release/fmanager.o
+release/gamewindow.o
+release/main.o
+release/mainwindow.o
+release/registerwindow.o
+release/qrc_Resources.o
+release/moc_block.o
+release/moc_gamewindow.o
+release/moc_mainwindow.o
+release/moc_registerwindow.o

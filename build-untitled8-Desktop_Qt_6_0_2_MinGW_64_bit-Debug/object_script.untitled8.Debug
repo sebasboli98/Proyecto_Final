@@ -1,0 +1,11 @@
+debug/block.o
+debug/fmanager.o
+debug/gamewindow.o
+debug/main.o
+debug/mainwindow.o
+debug/registerwindow.o
+debug/qrc_Resources.o
+debug/moc_block.o
+debug/moc_gamewindow.o
+debug/moc_mainwindow.o
+debug/moc_registerwindow.o

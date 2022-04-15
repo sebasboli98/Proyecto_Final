@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#define NCD {"../VolatileRush/Files/enckey.dat","../VolatileRush/Files/players.dat"}
-#define NPD {"Dain1778021;1778021;Dain;dleon2407@hotmail.com;7;1;69069"}
+#define NCD {"../untitled8/Files/enckey.dat","../untitled8/Files/players.dat"}
+#define NPD {"Sebas1778021;1778021;Sebas;sebasboli98@gmail.com;7;1;69069"}
 
 
 registerwindow::registerwindow(bool mode_, QWidget *parent) :
@@ -39,7 +39,7 @@ registerwindow::registerwindow(bool mode_, QWidget *parent) :
 
     }
 
-    m_fmanager = new fmanager("../VolatileRush/Files/config.dat");
+    m_fmanager = new fmanager("../untitled8/Files/config.dat");
     m_fmanager->newFileData(NCD);
     m_fmanager->changeFile(m_fmanager->getFileData()[1]);
     m_fmanager->newFileData(NPD);
