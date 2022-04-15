@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#define NCD {"../untitled8/Files/enckey.dat","../untitled8/Files/players.dat"}
-#define NPD {"Sebas1778021;1778021;Sebas;sebasboli98@gmail.com;7;1;69069"}
+#define NCD {"../VolatileRush/Files/enckey.dat","../VolatileRush/Files/players.dat"}
+#define NPD {"Dain1778021;1778021;Dain;dleon2407@hotmail.com;7;1;69069"}
 
 
 registerwindow::registerwindow(bool mode_, QWidget *parent) :
@@ -20,8 +20,11 @@ registerwindow::registerwindow(bool mode_, QWidget *parent) :
     ui->UsedMail->hide();
     ui->UsedName->hide();
 
+    setWindowTitle("Sign in");
+
     if(m_mode/* Login*/){
 
+        setWindowTitle("Log in");
         ui->Title->setText("Ingresar");
         ui->Continue->setText("Ingresar");
         ui->namelabel->setText("Nombre de usuario");
@@ -36,7 +39,7 @@ registerwindow::registerwindow(bool mode_, QWidget *parent) :
 
     }
 
-    m_fmanager = new fmanager("../untitled8/Files/config.dat");
+    m_fmanager = new fmanager("../VolatileRush/Files/config.dat");
     m_fmanager->newFileData(NCD);
     m_fmanager->changeFile(m_fmanager->getFileData()[1]);
     m_fmanager->newFileData(NPD);
@@ -74,6 +77,9 @@ registerwindow::~registerwindow()
 
 bool registerwindow::loginUser(std::string UserName_, std::string UserPass_)
 {
+    ui->WrongUser->hide();
+    ui->WrongPass->hide();
+
     if(m_usersData.count(UserName_ + UserPass_) == 0){
         for(auto _user : this->m_usersData){
             if(_user.second.first[1] == UserName_){
@@ -129,7 +135,6 @@ bool registerwindow::registerUser(std::string UserName_, std::string UserPass_, 
     return true;
 }
 
-
 void registerwindow::on_Continue_clicked()
 {
     if(m_mode){
@@ -177,4 +182,3 @@ void registerwindow::on_Exit_clicked()
 {
     exit(1);
 }
-

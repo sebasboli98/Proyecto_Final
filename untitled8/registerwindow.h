@@ -35,6 +35,7 @@ private:
     fmanager *m_fmanager;
 
     gvr::udat m_usersData; // Username {Pass, Email}
+    std::vector<std::string> m_levelData;
 
     bool m_mode;
 
