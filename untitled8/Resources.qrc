@@ -5,5 +5,9 @@
         <file>Images/rexplotion.png</file>
         <file>Images/tabla.png</file>
         <file>Images/wtabla.png</file>
+        <file>Images/MarcoMadera.png</file>
+        <file>Images/MarcoMetal1.png</file>
+        <file>Images/WoodBox.png</file>
+        <file>Images/Wood-SteelBox.png</file>
     </qresource>
 </RCC>

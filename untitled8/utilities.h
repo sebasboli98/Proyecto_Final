@@ -45,6 +45,11 @@ namespace mo{
         return Ans;
     }
 
+    template<typename T>
+    T abs(T Num){
+        return unsigned(Num);
+    }
+
     inline float invSqrt(float n){ // Quake III Fast invert Square Root Algorithm
         long i;
         float x2, y;

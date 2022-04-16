@@ -143,12 +143,7 @@ void registerwindow::on_Continue_clicked()
             ui->passbox->clear();
             return;
         }
-        gw = new gamewindow(m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()], this);
-        gw->show();
-        this->hide();
-
     }
-
     else{
         if(!registerUser(ui->namebox->text().toStdString(), ui->passbox->text().toStdString(), ui->mailbox->text().toStdString())){
             ui->mailbox->clear();
@@ -169,13 +164,18 @@ void registerwindow::on_Continue_clicked()
                         ui->mailbox->text().toStdString() + ";" +
                         "1;0;0");
 
-        gw = new gamewindow(m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()], this);
-        gw->show();
-        this->hide();
+        // gw = new gamewindow(m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()], this);
+        // gw->show();
+        // this->hide();
     }
-    //m_gameWindow = new gamewindow();
+
+    gw = new gamewindow(m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()]);
+    gw->show();
+    gw->showMaximized();
+    this->hide();
 
 }
+
 
 
 void registerwindow::on_Exit_clicked()

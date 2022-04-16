@@ -14,6 +14,7 @@ SOURCES += \
     gamewindow.cpp \
     main.cpp \
     mainwindow.cpp \
+    player.cpp \
     registerwindow.cpp
 
 HEADERS += \
@@ -21,6 +22,7 @@ HEADERS += \
     fmanager.h \
     gamewindow.h \
     mainwindow.h \
+    player.h \
     registerwindow.h \
     utilities.h
 
