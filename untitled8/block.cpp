@@ -3,6 +3,8 @@
 block::block(bool Solid_, bool Breakable_, bool Movable_, [[maybe_unused]] QGraphicsItem *parent)
     : m_Solid(Solid_), m_Breakable(Breakable_), m_Movable(Movable_)
 {
+    m_OnGround = false;
+
     m_Mass = 40; // Kg
     m_DragQ = 0.7f;
     m_FrictionQS = 0.8f;
@@ -51,7 +53,7 @@ void block::Move(float Dt){
 
     }
     { /// X Movement
-        if(collidingItems().isEmpty()){
+        if(!OnGround()){
             m_FrictionQD = 0.0f;
             m_FrictionQS = 0.0f;
         }
@@ -68,13 +70,17 @@ void block::Move(float Dt){
         m_Sl.first += m_Al.first;
         setX(x() + m_Sl.first);
     }
-    if(!scene()->views().isEmpty())
-        scene()->views().first()->centerOn(this);
+    //if(!scene()->views().isEmpty())
+    //    scene()->views().first()->centerOn(this);
+
+    m_OnGround = false;
+    m_FrictionQS = 0.8f;
+    m_FrictionQD = 0.62f;
+
 }
 
-void block::Rotate([[maybe_unused]]float Dt){
+void block::Rotate(float Dt){
 
-    setTransformOriginPoint(x() + pixmap().width() * 0.5, y() - pixmap().height() * 0.5);
     setRotation(m_Sw * Dt);
 
 }
@@ -180,14 +186,11 @@ void block::UpdateStop(){m_UpdateTimer->stop();}
 //}
 
 void block::Update(){
-
+    setTransformOriginPoint(x() + pixmap().width() * 0.5, y() - pixmap().height() * 0.5);
     if(m_Movable){
         Move(0.016f); // 60 updates per second 0.016f
         Rotate(0.016f);
     }
     return;
 }
-
-
-
 

@@ -36,19 +36,6 @@ namespace mo{
     //    return a;
     //}
     //^
-    template <typename T>
-    T exp(T base, int exponent){
-        T Ans = 1;
-        for(; exponent > 0; exponent--){
-            Ans *= base;
-        }
-        return Ans;
-    }
-
-    template<typename T>
-    T abs(T Num){
-        return unsigned(Num);
-    }
 
     inline float invSqrt(float n){ // Quake III Fast invert Square Root Algorithm
         long i;
@@ -65,8 +52,22 @@ namespace mo{
         return y;
     }
 
-    inline float oneOver(float num) {return invSqrt(num * num);}
+    inline float oneOver(float num) {return num > 0? invSqrt(num * num) : invSqrt(num * num) * -1;}
     inline float Sqrt(float n){return oneOver(invSqrt(n));}
+
+    template <typename T>
+    T exp(T base, int exponent){
+        T Ans = 1;
+        for(; exponent > 0; exponent--){
+            Ans *= base;
+        }
+        return Ans;
+    }
+
+    template<typename T>
+    T abs(T Num){
+        return Num >= 0? Num : Num * -1;
+    }
 
 }
 #endif // UTILITIES_H

@@ -5,10 +5,15 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QTimer>
 
-#include "block.h"
 #include "fmanager.h"
+#include "block.h"
+#include "player.h"
+#include "enemy.h"
+#include "checkpoint.h"
+
 #include "utilities.h"
 
 namespace Ui {
@@ -25,11 +30,24 @@ public:
 
 private:
     void keyPressEvent(QKeyEvent *Event);
+    void keyReleaseEvent(QKeyEvent * Event);
+    void mousePressEvent(QMouseEvent *Event);
+    void mouseMoveEvent(QMouseEvent *Event);
+
+    void LoadTextures();
+    void LoadSounds();
+
     void AddBlocks();
+    void AddEntities();
+    void AddPlayer();
 
     void enableCollitions();
-    void StartCollitions(uint t);
+    void StartCollitions(uint ms);
     void StopCollitions();
+
+    void enableMovement();
+    void StartMovement(uint ms);
+    void StopMovement();
 
 private:
     Ui::gamewindow *ui;
@@ -44,9 +62,16 @@ private:
     QGraphicsScene *TexturesScene;
     //QGraphicsView *View;
 
+    bool m_GameRunning;
+
     gvr::udpair m_playerData;
+    player *p;
     std::vector<std::pair<std::string, uint>> m_platforms;
     std::vector<std::pair<uint, std::pair<gvr::llint, int>>> m_decorations;
+
+    std::map<int, bool> m_keys;
+    QTimer *m_KeyTimer;
+
 };
 
 #endif // GAMEWINDOW_H

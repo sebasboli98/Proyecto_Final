@@ -10,19 +10,25 @@ CONFIG += c++11
 
 SOURCES += \
     block.cpp \
+    checkpoint.cpp \
+    enemy.cpp \
     fmanager.cpp \
     gamewindow.cpp \
     main.cpp \
     mainwindow.cpp \
     player.cpp \
+    proyectile.cpp \
     registerwindow.cpp
 
 HEADERS += \
     block.h \
+    checkpoint.h \
+    enemy.h \
     fmanager.h \
     gamewindow.h \
     mainwindow.h \
     player.h \
+    proyectile.h \
     registerwindow.h \
     utilities.h
 
