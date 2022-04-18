@@ -50,7 +50,7 @@ gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) :
     //MenuView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //MenuView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    ui->label->setText("Una mondaa de titulo :v");
+    ui->label->setText("Corre Perra Corre!");
     m_GameRunning = false;
 
 }

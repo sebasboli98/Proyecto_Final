@@ -38,12 +38,13 @@ registerwindow::registerwindow(bool mode_, QWidget *parent) :
         ui->passbox->setGeometry(ui->passbox->x(), 330, ui->passbox->width(), ui->passbox->height());
 
     }
-
-    m_fmanager = new fmanager("../untitled8/Files/config.dat");
-    m_fmanager->newFileData(NCD);
-    m_fmanager->changeFile(m_fmanager->getFileData()[1]);
-    m_fmanager->newFileData(NPD);
-    m_usersData = [&](){
+    //OBTENER DATOS DE LOS JUGADORES EN LOS ARCHIVOS
+    m_fmanager = new fmanager("../untitled8/Files/config.dat"); //llamamos al manejador de archivos / creacion de la memoria dinamica
+    //../untitled8/Files/config.dat -> Aca es donde se ubica el archivo, si no se encuentra lo crea, en caso de estar lo abre.
+    m_fmanager->newFileData(NCD); //utilizacion de macro para dtos de inicializacion
+    m_fmanager->changeFile(m_fmanager->getFileData()[1]); // accedo a la segunda posicion para leer los datos de los jugadores
+    m_fmanager->newFileData(NPD); //utilizacion de macro por si el archivo no exisitia.
+    m_usersData = [&](){ // lambda funcion que se ejecutara una sola vez
         gvr::udat _mapData;
 
         for(std::string t_data : m_fmanager->getFileData()){

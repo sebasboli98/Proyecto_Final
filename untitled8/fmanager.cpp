@@ -1,60 +1,63 @@
 #include "fmanager.h"
 
 fmanager::fmanager(const std::string& File_)
-    : m_File(File_), m_Data(), m_NFData()
+    : m_File(File_), m_Data(), m_NFData()  //atributos de la clase, inicializacion de los atributos.
 {
     return;
 }
 
-std::vector<std::string> fmanager::getFileData()
+std::vector<std::string> fmanager::getFileData() //Funcion que lee los datos y los retorna.
 {
-    readFile(); // Read file and updates data in variable
+    readFile(); // invocacion de funcion que lee los datos para retornar los datos leidos.
     return m_Data;
 }
 
-void fmanager::setFileData(const std::vector<std::string> &NewData_)
+void fmanager::setFileData(const std::vector<std::string> &NewData_) //funcion que actualiza los datos.
 {
-    m_Data = NewData_; // Sets the data variable to the desired data
-    writeFile(); // Writes new data to file
+    m_Data = NewData_; // Guarda los nuevos datos en la variable de datos.
+    writeFile(); // Se hace la escritura de los datos en el archivo.
     return;
 }
 
-void fmanager::changeFile(const std::string &NewFile_)
+void fmanager::changeFile(const std::string &NewFile_) //Funcion que modifica el archivo que se trabajará.
 {
-    m_File = NewFile_; // Change file dir to access
-    m_Data = {}; // Resets the data in variable
+    m_File = NewFile_; // Guarda la direccion del nuevo archivo.
+    m_Data = {}; // Limpieza de datos, ya que puede tener datos de archivos anterires {}-> Construccion implicita para crear vector vacio.
     return;
 }
 
-void fmanager::newFileData(const std::vector<std::string> &Data_)
+void fmanager::newFileData(const std::vector<std::string> &Data_) //Funcion que recibe los datos en caso de que el archivo no exista.
 {
-    m_NFData = Data_; // Stores the data to write if a file is created
+    m_NFData = Data_; // Se asignan los datos en la variable para uttilizarlos en la lectura.
     return;
 }
 
-void fmanager::overrideFileData(std::vector<std::string> NewData_)
+void fmanager::overrideFileData(std::vector<std::string> NewData_) // Funcion que sobreescribe el archivo, para actualizar el archivo.
 {
     std::ofstream _File;
-    _File.open(m_File, std::ios::out); // Opens or create the file
-    for(auto _data : NewData_)
-        _File << _data + "\n"; // Writes NewData_ into file
+    _File.open(m_File, std::ios::out); //métedo de apertura para escribir o borrar los datos del archivo.
+    for(auto _data : NewData_) // For en rango que recibe un vector para que todas las posiciones seran cargadas
+        _File << _data + "\n"; // escritura de linea por linea de los datos.
+    _File.close();
     return;
 }
 
-void fmanager::overrideFileData(std::string NewData_)
+void fmanager::overrideFileData(std::string NewData_) //Funcion muy similar a la anterior para utilizar solo un dato.
 {
     std::ofstream _File;
-    _File.open(m_File, std::ios::out); // Opens or create the file
-    _File << NewData_ + "\n"; // Writes NewData_ into file
+    _File.open(m_File, std::ios::out); // Apertura del archivo.
+    _File << NewData_ + "\n"; // Escritura de  NewData_ en el archivo.
+    _File.close();
     return;
 }
 
-void fmanager::appendFileData(std::vector<std::string> NewData_)
+void fmanager::appendFileData(std::vector<std::string> NewData_) //Funcion que se encarga de agregar los datos al final del archivo
 {
     std::ofstream _File;
-    _File.open(m_File, std::ios::app); // Opens the file
-    for(auto _data : NewData_)
-        _File << _data + "\n"; // Writes NewData_ at the end of file
+    _File.open(m_File, std::ios::app); // método de apertura para agregar al final del archivo.
+    for(auto _data : NewData_) // For en rango que recibe un vector para que todas las posiciones seran cargadas
+        _File << _data + "\n"; //// escritura de linea por linea de los datos.
+    _File.close();
     return;
 }
 
