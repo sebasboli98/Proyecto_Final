@@ -5,7 +5,7 @@
 
 
 
-gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) :
+gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) ://Constructor
     QWidget(parent),
     ui(new Ui::gamewindow),
     m_playerData(playerData_)
@@ -76,7 +76,7 @@ void gamewindow::mouseMoveEvent(QMouseEvent *Event){
 
 }
 
-void gamewindow::AddBlocks()
+void gamewindow::AddBlocks()//
 {
 
     block *b = new block(1,0,1);
@@ -95,14 +95,14 @@ void gamewindow::AddBlocks()
 
     for(int i = 1500; i > 0; i--){
         b = new block(1,0,0);
-        b->setPos((160 * i), 500);
+        b->setPos((480 * i), 420);
         MenuScene->addItem(b);
     }
 
     // Usar datos leidos
 }
 
-void gamewindow::enableCollitions(){
+void gamewindow::enableCollitions(){//Jugador colisione con otros objetos
     m_Collitions = new QTimer();
     connect(m_Collitions, &QTimer::timeout, [&](){
         // Player collitions
@@ -141,8 +141,8 @@ void gamewindow::enableCollitions(){
 void gamewindow::StartCollitions(uint t){m_Collitions->start(t);}
 void gamewindow::StopCollitions(){m_Collitions->stop();}
 
-void gamewindow::enableMovement(){
-    m_KeyTimer = new QTimer();
+void gamewindow::enableMovement(){ //Lista de las teclas
+    m_KeyTimer = new QTimer();//Moviemintos
     connect(m_KeyTimer, &QTimer::timeout, [&](){
         ;
         for(auto i : m_keys){

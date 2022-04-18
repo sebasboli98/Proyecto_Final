@@ -76,7 +76,7 @@ registerwindow::~registerwindow()
     delete ui;
 }
 
-bool registerwindow::loginUser(std::string UserName_, std::string UserPass_) //verifica si los datos son croresctos para ingresar.
+bool registerwindow::loginUser(std::string UserName_, std::string UserPass_) //verifica si los datos son correctos para ingresar.
 {
     ui->WrongUser->hide();
     ui->WrongPass->hide();

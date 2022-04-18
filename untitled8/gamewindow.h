@@ -29,6 +29,7 @@ public:
     ~gamewindow();
 
 private:
+    //Para usar el teclado y mause
     void keyPressEvent(QKeyEvent *Event);
     void keyReleaseEvent(QKeyEvent * Event);
     void mousePressEvent(QMouseEvent *Event);
