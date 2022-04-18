@@ -26,10 +26,10 @@ block::block(bool Solid_, bool Breakable_, bool Movable_, [[maybe_unused]] QGrap
     m_Textures = {":/gfx/Images/Wood-SteelBox.png", "", ""};
     m_Sounds = {"", "", ""};
 
-    setPixmap(QPixmap(m_Textures[0].c_str()).scaled(80, 80));
+    setPixmap(QPixmap(m_Textures[0].c_str()).scaled(80, 80));//Colocar la imagen
     setTransformOriginPoint(x() + pixmap().width() * 0.5, y() - pixmap().height() * 0.5);
 
-    if(m_Movable){
+    if(m_Movable){   //verificar si se puede mover o no
         m_UpdateTimer = new QTimer();
         connect(m_UpdateTimer, SIGNAL(timeout()), this, SLOT(Update()));
         UpdateStart(16);
@@ -37,44 +37,42 @@ block::block(bool Solid_, bool Breakable_, bool Movable_, [[maybe_unused]] QGrap
 }
 
 void block::Move(float Dt){
-    { /// Y Movement
-        short modifier = ((m_Sl.second >= 0) * 2) - 1;
+    { /// Movimientos en Y
+        short modifier = ((m_Sl.second >= 0) * 2) - 1; //verifica la direccion de la fuerza contraria
 
-        float ma = m_Mass * m_Al.second;
-        float w = m_Mass * m_Gravity;
-        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalArea * mo::exp(m_Sl.second, 2) * modifier;
+        float ma = m_Mass * m_Al.second; //Fuerza
+        float w = m_Mass * m_Gravity;       //Peso
+        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalArea * mo::exp(m_Sl.second, 2) * modifier;//Fuerza de arrastre
 
 
-        float ar = (ma - fd + w) / m_Mass;
+        float ar = (ma - fd + w) / m_Mass; //Aceleracion resultante
         m_Al.second = ar * Dt;
         m_Sl.second += m_Al.second;
         setY(y() + m_Sl.second);
         //m_Sl.second > 0? setY(y() + (m_OnGround * m_Sl.second * Dt)) : setY(y() + m_Sl.second * Dt);
 
     }
-    { /// X Movement
-        if(!OnGround()){
+    { //Movimiento en X
+        if(!OnGround()){ //Verifico si esta en el suelo
             m_FrictionQD = 0.0f;
             m_FrictionQS = 0.0f;
         }
 
-        short modifier = ((m_Sl.first >= 0) * 2) - 1; // m_Sl.first > 0? 1 : -1;
+        short modifier = ((m_Sl.first >= 0) * 2) - 1; // Verfica la direccion
 
         float ma = m_Mass * m_Al.first;
         float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalArea * mo::exp(m_Sl.first, 2) * modifier;
-        float frS = m_Mass * m_Gravity * m_FrictionQS * modifier;
+        float frS = m_Mass * m_Gravity * m_FrictionQS * modifier; //modificando
         float frD = m_Mass * m_Gravity * m_FrictionQD * modifier;
 
-        float ar = (!(mo::abs(ma) < mo::abs(fd+frS))) * ((ma - (fd + frD)) / m_Mass); // mo::abs(ma) < mo::abs(fd+frS)? 0 : ((ma - (fd + frD)) / m_Mass);
+        float ar = (!(mo::abs(ma) < mo::abs(fd+frS))) * ((ma - (fd + frD)) / m_Mass); // Aceleracion resultante
         m_Al.first = ar * Dt;
         m_Sl.first += m_Al.first;
         setX(x() + m_Sl.first);
     }
-    //if(!scene()->views().isEmpty())
-    //    scene()->views().first()->centerOn(this);
 
     m_OnGround = false;
-    m_FrictionQS = 0.8f;
+    m_FrictionQS = 0.8f; //Restablezco valores de friccion
     m_FrictionQD = 0.62f;
 
 }
@@ -159,36 +157,11 @@ void block::UpdateStop(){m_UpdateTimer->stop();}
 
 
 
-//gvr::vec2d Vxy_, gvr::vec2d Vw_ = {0,0}
-//template<typename ... Floats, typename ... Pairs>
-//[[deprecated("Use specialization")]]
-//void block::Collition(Floats ... floats, Pairs ... pairs){
-//    Collition(floats ..., pairs ...);
-//    return;
-//}
-//
-//
-//void block::Collition(float Mass_, float Vw_, gvr::vec2d Vl_, gvr::vec2d Pos_){
-//    float pl = Mass_ * mo::Sqrt(mo::exp(Vl_.first,2) + mo::exp(Vl_.second,2));
-//    float pw = Mass_ * Vw_;
-//
-//    float a = 0;
-//    //float vt = (this->pixmap().width() * 0.5f) * Vw_;
-//    Collition(pl + pw, Pos_);
-//    return;
-//}
-//
-//template<>
-//void block::Collition(float Momentum_, gvr::vec2d Pos_){
-//
-//
-//    return;
-//}
 
 void block::Update(){
     setTransformOriginPoint(x() + pixmap().width() * 0.5, y() - pixmap().height() * 0.5);
     if(m_Movable){
-        Move(0.016f); // 60 updates per second 0.016f
+        Move(0.016f); //
         Rotate(0.016f);
     }
     return;

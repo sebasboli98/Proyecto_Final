@@ -10,6 +10,7 @@
 class checkpoint: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
+
 public:
     checkpoint(float px, float py, QGraphicsItem *parent = nullptr);
     void updateTextures();
