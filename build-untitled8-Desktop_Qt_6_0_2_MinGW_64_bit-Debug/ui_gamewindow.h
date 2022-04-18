@@ -37,7 +37,7 @@ public:
         MainView->setObjectName(QString::fromUtf8("MainView"));
         MainView->setEnabled(true);
         MainView->setGeometry(QRect(0, 0, 1080, 720));
-        MainView->setStyleSheet(QString::fromUtf8("background-image: url(:/gfx/Images/fondo.jpg);"));
+        MainView->setStyleSheet(QString::fromUtf8("background-image: url(:/gfx/Images/Fondo.jpg);"));
         label = new QLabel(gamewindow);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(340, 120, 371, 141));

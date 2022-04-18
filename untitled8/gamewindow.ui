@@ -32,7 +32,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-image: url(:/gfx/Images/fondo.jpg);</string>
+    <string notr="true">background-image: url(:/gfx/Images/Fondo.jpg);</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">

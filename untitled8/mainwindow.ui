@@ -36,7 +36,7 @@
      <bool>true</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-image: url(:/gfx/Images/fondo.jpg);</string>
+     <string notr="true">background-image: url(:/gfx/Images/Fondo.jpg);</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Login">
@@ -141,7 +141,7 @@ color: rgb(0, 0, 0);</string>
      <x>0</x>
      <y>0</y>
      <width>1366</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
