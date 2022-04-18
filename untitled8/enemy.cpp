@@ -6,7 +6,7 @@ enemy::enemy(float px, float py, QGraphicsItem *parent)
     m_ShootCD = false;
     m_UpdateTextures = false;
 
-    m_RemainingCD = 120; //  2 * 60 times per second
+    m_RemainingCD = 120; //  2 * 60 veces por segundo
     m_TexturesUsing = 0;
 
     m_Mass = 90; // Kg

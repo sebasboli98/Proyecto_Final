@@ -17,18 +17,19 @@ class player: public QObject, public QGraphicsPixmapItem
 public:
     player(float px, float py, QGraphicsItem * parent = nullptr);
 
-    void Move(float Dt);
-    void Jump();
-    void Slide();
-    void Shoot(float x_, float y_);
+    void Move(float Dt); //movimiento(Fisicas)
+    void Jump();    //salto
+    void Slide();   //desliza
+    void Shoot(float x_, float y_); // Disparar
 
-    void Collition(float OtherMass_, float RestitutionQ_, gvr::vec2d OtherVl_);
+    void Collition(float OtherMass_, float RestitutionQ_, gvr::vec2d OtherVl_); //Metodo de colision
     void Collition(float ExplotionForce_, gvr::vec2d Pos_);
 
-    bool onGround();
-    bool isSliding();
-    bool isShootCooldownActive();
+    bool onGround();    //esta encima de un objeto
+    bool isSliding(); //comprueba si esta deslizando
+    bool isShootCooldownActive();   //comprueba si esta activado el disparo
 
+    //Getters,recibir los datos
     float getMass();
     float getDragQ();
     float getFrictionQS();
@@ -36,15 +37,16 @@ public:
     float getTransversalAreaX();
     float getTransversalAreaY();
 
-    gvr::vec2d getLinealSpeed();
-    gvr::vec2d getLinealAcceleration();
+    gvr::vec2d getLinealSpeed();    //Velocidad x y
+    gvr::vec2d getLinealAcceleration(); //Aceleracion x y
 
+    //Setters, para modificar los valores
     void setOnGround(bool State_);
     void setSliding(bool State_);
     void setShootCooldownActive(bool State_);
 
     void setUsingTextures(short TextureNum);
-
+//para las fisicas
     void setMass(float NewMass_);
     void setDragQ(float NewDrag_);
     void setFrictionQS(float NewSQF_);
@@ -52,14 +54,14 @@ public:
     void setRestitutionQ(float NewRestitutionQ_);
     void setTransversalAreaX(float NewTransversalArea_);
     void setTransversalAreaY(float NewTransversalArea_);
-    void setHP(float);
+    void setHP(float);//vida del jugador
 
     void setMediumD(float NewMediumD_);
     void setGravity(float NewGravity_);
 
-    void setTextures(std::array<std::vector<std::string>, 5> TexturesDirs_);
-    void setSounds(std::array<std::string, 5> SoundsDirs_);
-
+    void setTextures(std::array<std::vector<std::string>, 5> TexturesDirs_);//texturas
+    void setSounds(std::array<std::string, 5> SoundsDirs_);//Sonidos
+//setters de velocidades
     void setLinealSpeed(gvr::vec2d NewSl_);
     void setLinealSpeed(float Sx, float Sy);
     void setSpeedX(float Sx);
@@ -70,19 +72,20 @@ public:
     void setAccelerationX(float Ax);
     void setAccelerationY(float Ay);
 
-    void UpdateStart(float ms);
-    void UpdateStop();
+    void UpdateStart(float ms); //Actualizacion de inicio
+    void UpdateStop();          //detiene la actualizaciones
 
-    void SelectTextures(short TN);
+    void SelectTextures(short TN);//Seleccion de texturas
     void ReproduceSound(short SN);
 
-    void UpdateTextures();
-    void Damage(double Force);
+    void UpdateTextures();      //Actulizacion de texturas
+    void Damage(double Force);  //
 
 private slots:
-    virtual void Update();
+    virtual void Update();      //Ciclo para atualizar
 
 private:
+    //Varibales
     bool m_OnGround;
     bool m_IsSliding;
     bool m_ShootCD;
@@ -102,8 +105,8 @@ private:
     float m_Gravity;
     float m_MediumD;
 
-    gvr::vec2d m_Sl;
-    gvr::vec2d m_Al;
+    gvr::vec2d m_Sl;//Velocidad lienal
+    gvr::vec2d m_Al;//Acelearacion lineal
 
     std::array<std::vector<std::string>, 5> m_Textures;
     std::array<std::string, 5> m_Sounds;

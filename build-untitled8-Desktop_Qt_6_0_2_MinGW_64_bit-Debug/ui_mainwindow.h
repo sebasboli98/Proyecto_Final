@@ -37,6 +37,7 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(1366, 768);
+        MainWindow->setStyleSheet(QString::fromUtf8(""));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         graphicsView = new QGraphicsView(centralwidget);
@@ -47,7 +48,7 @@ public:
         font.setPointSize(22);
         graphicsView->setFont(font);
         graphicsView->setAutoFillBackground(true);
-        graphicsView->setStyleSheet(QString::fromUtf8("background-image: url(:/gfx/Images/Fondo.jfif);"));
+        graphicsView->setStyleSheet(QString::fromUtf8("background-image: url(:/gfx/Images/fondo.jpg);"));
         Login = new QPushButton(centralwidget);
         Login->setObjectName(QString::fromUtf8("Login"));
         Login->setGeometry(QRect(396, 450, 221, 111));
@@ -87,7 +88,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1366, 21));
+        menubar->setGeometry(QRect(0, 0, 1366, 20));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
