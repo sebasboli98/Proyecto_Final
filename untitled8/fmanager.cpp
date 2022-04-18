@@ -61,68 +61,57 @@ void fmanager::appendFileData(std::vector<std::string> NewData_) //Funcion que s
     return;
 }
 
-void fmanager::appendFileData(std::string NewData_)
+void fmanager::appendFileData(std::string NewData_) // Implementacion de funcion similar a la anterior pero para un solo dato.
 {
     std::ofstream _File;
-    _File.open(m_File, std::ios::app); // Opens the file
-    _File << NewData_ + "\n"; // Writes NewData_ at the end of file
+    _File.open(m_File, std::ios::app); // Apertura del archivo para agregar dato al final
+    _File << NewData_ + "\n"; //escritura  NewData_ at al archivo.
+}
+
+void fmanager::deleteFileData() // Funcion que borra los datos del archivo en caso de que los datos esten dañados.
+{
+    std::ofstream _File;
+    _File.open(m_File, std::ios::out); // Metodo para sobreescritura del archivo
+    _File << "\0"; // caracter nulo para borrar los datos.
     return;
 }
 
-void fmanager::deleteFileData()
-{
-    std::ofstream _File;
-    _File.open(m_File, std::ios::out); // Opens the file
-    _File << "\0"; // Overrides data with null char
-    return;
-}
-
-void fmanager::readFile()
+void fmanager::readFile()  //Lógica para implementacion de a lectura de archivos y manejo de excepciones.
 {
     std::ifstream _File;
-    _File.open(this->m_File, std::ios::in); // Opens file
-    if(_File.fail()){ // Checks if the file exists
+    _File.open(this->m_File, std::ios::in); // Método de apertura del archivo en modo lectura (in)
+    if(_File.fail()){ // Se verifica que el archivo exista. en caso de que no exista entra en el condicional.
         qDebug() << QString("Archivo no encontrado.");
-        _File.close();
+        _File.close(); //cierra el archivo para abrir el archivo en modo de ecritura o creacion.
 
         std::ofstream Temp;
-        Temp.open(this->m_File, std::ios::out); // Creates the file
-        for(auto _data : this->m_NFData){
-            Temp << _data + "\n"; // Writes the creation data (if any)
+        Temp.open(this->m_File, std::ios::out); //creacion del archivo. (out)
+        for(auto _data : this->m_NFData){ // For en rango para guardar los datos en caso de que no exista.
+            Temp << _data + "\n"; // Escritura de los datos si hay datos.
         }
-        Temp.close(); //
-
-        /*for(int i = 0, j = 0; i < this->m_NFData.length(); i++){
-
-            if(this->m_NFData[i] == 92 && this->m_NFData[i + 1] == 'n'){ // Ascii 92 == "\"
-                j++; i++;
-                continue;
-            }
-            m_Data[j] += this->m_NFData[i];
-        }*/ /// Updates the Data array with the new info in file
-
-        _File.open(this->m_File, std::ios::in);
-        if(_File.fail()) [[unlikely]]{ // Checks if the file was created successfully
-            exit(-404); // Exits with error if not
+        Temp.close(); // se cierra el archivo.
+        _File.open(this->m_File, std::ios::in);//Se vuelve a abrir el archivo en modo lectura
+        if(_File.fail()) [[unlikely]]{ // Verificacion del archivo en caso de que haya sido creado correctamente.   [[unlikely]] Es poco probable que ocurra
+            exit(-404); // Erorr que determina cierre del programa
         }
     } // End if(Fail)
     {
-        std::string Temp;
-        while(!_File.eof()){
-            std::getline(_File, Temp); // Reads data from file
-            this->m_Data.push_back(Temp); // Stores data in variable
+        std::string Temp; //creacion de variable temporal para guardar los datos temporalmente
+        while(!_File.eof()){ //ciclo para recorrer el archivo linea por linea.
+            std::getline(_File, Temp); // Lectura de la linea en la posicion respectiva.
+            this->m_Data.push_back(Temp); // Guardado de datos temporales en estructura de datos.
         }
     }
-    _File.close();
+    _File.close(); //cierra el archivo y se sale.
     return;
 }
 
-void fmanager::writeFile()
+void fmanager::writeFile() // Funcion que va a escribir los datos en el archivo.
 {
     std::ofstream _File;
-    _File.open(this->m_File, std::ios::out); // Opens / Create file
+    _File.open(this->m_File, std::ios::out); // Apertura del archivo en modo de escritura o creacion (out)
 
-    for(std::string s : this->m_Data){ // Writes the data from variable to file
+    for(std::string s : this->m_Data){ // for en rango que escribe los datos al archivo.
         _File << s + "\n";
     }
 

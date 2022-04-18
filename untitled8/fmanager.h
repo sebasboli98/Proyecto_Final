@@ -12,9 +12,9 @@ class fmanager
 public:
     fmanager(const std::string&);
 
-    // File Data getter / setter
-    std::vector<std::string> getFileData(); //Obtenemos los datos
-    void setFileData(const std::vector<std::string>&); //Guardamos los datos
+    // File Data getter / setter                //METODOS A USAR EN EL FMANAGER
+    std::vector<std::string> getFileData(); //Obtenemos los datos del archivo
+    void setFileData(const std::vector<std::string>&); //Guardamos los datos en el archivo
     // Change file to read / write
     void changeFile(const std::string&); //Cambiar archivo o editar
     // Data to write when a file is created
@@ -36,9 +36,9 @@ private:
 public:
 
 private:
-    std::string m_File; // Current file using -  Direccion del archivo
-    std::vector<std::string> m_Data; // Data from file - Datos pertenecientes a la direccion del archivo
-    std::vector<std::string> m_NFData; // Data to write when file does not exists - contiene los datos a colocar si no existe
+    std::string m_File; //   Direccion  con del archivo
+    std::vector<std::string> m_Data; //  Datos pertenecientes a la direccion del archivo   -  copiamos las lineas por separados
+    std::vector<std::string> m_NFData; // contiene los datos a colocar si no existe
 
 };
 
