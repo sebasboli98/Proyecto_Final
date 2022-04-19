@@ -95,7 +95,7 @@ void gamewindow::AddBlocks()//
 
     for(int i = 1500; i > 0; i--){
         b = new block(1,0,0);
-        b->setPos((480 * i), 420);
+        b->setPos((480 * i), 420 );
         MenuScene->addItem(b);
     }
 
