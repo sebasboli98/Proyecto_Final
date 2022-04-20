@@ -1,6 +1,7 @@
 debug/block.o
 debug/checkpoint.o
 debug/enemy.o
+debug/explotion.o
 debug/fmanager.o
 debug/gamewindow.o
 debug/main.o
@@ -12,6 +13,7 @@ debug/qrc_Resources.o
 debug/moc_block.o
 debug/moc_checkpoint.o
 debug/moc_enemy.o
+debug/moc_explotion.o
 debug/moc_gamewindow.o
 debug/moc_mainwindow.o
 debug/moc_player.o

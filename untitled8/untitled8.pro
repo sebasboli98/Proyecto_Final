@@ -12,6 +12,7 @@ SOURCES += \
     block.cpp \
     checkpoint.cpp \
     enemy.cpp \
+    explotion.cpp \
     fmanager.cpp \
     gamewindow.cpp \
     main.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     block.h \
     checkpoint.h \
     enemy.h \
+    explotion.h \
     fmanager.h \
     gamewindow.h \
     mainwindow.h \

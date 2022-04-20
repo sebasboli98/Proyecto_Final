@@ -6,7 +6,7 @@ enemy::enemy(float px, float py, QGraphicsItem *parent)
     m_ShootCD = false;
     m_UpdateTextures = false;
 
-    m_RemainingCD = 120; //  2 * 60 veces por segundo
+    m_RemainingCD = 120; //  2 * 60 times per second
     m_TexturesUsing = 0;
 
     m_Mass = 90; // Kg
@@ -140,7 +140,7 @@ void enemy::setAmmo(proyectile *Ammo_){
         return;
     }
 
-    m_Ammo = new proyectile(0,0,"bala normal");
+    m_Ammo = new proyectile("bala normal", "Elba Lazo");
     // Set default properties
 
 }
@@ -197,4 +197,3 @@ void enemy::Update(){
     if(m_UpdateTextures)
         UpdateTextures();
 }
-

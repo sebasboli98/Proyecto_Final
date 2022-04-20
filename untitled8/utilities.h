@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 
+#define OneThird 1/3
+
 namespace gvr{
 
     typedef unsigned int uint;
@@ -19,23 +21,7 @@ namespace gvr{
 }
 
 namespace mo{//Matematica operacional
-    //template<typename T>
-    //T operator^(T base, int exponent){
-    //    T Ans = 1;
-    //    for(; exponent > 0; exponent--){
-    //        Ans *= base;
-    //    }
-    //    return Ans;
-    //}
 
-    //template<>
-    //std::string operator^(std::string b, int e){
-    //    std::string a = "";
-    //    for(; e > 0; e--)
-    //        a += b;
-    //    return a;
-    //}
-    //^
 
     inline float invSqrt(float n){ // Inv raiz cuadrada(Salio del algoritmo de QuakeIII)
         long i;
