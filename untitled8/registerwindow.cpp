@@ -78,7 +78,7 @@ registerwindow::~registerwindow()
 
 bool registerwindow::loginUser(std::string UserName_, std::string UserPass_) //verifica si los datos son correctos para ingresar.
 {
-    ui->WrongUser->hide();
+    ui->WrongUser->hide();//indica el nombre
     ui->WrongPass->hide();
 
     if(m_usersData.count(UserName_ + UserPass_) == 0){ //verifica si la identifiacacion corresponde a los datos ingresados

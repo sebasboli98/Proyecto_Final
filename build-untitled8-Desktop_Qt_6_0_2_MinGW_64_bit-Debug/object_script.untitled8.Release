@@ -1,5 +1,6 @@
 release/block.o
 release/checkpoint.o
+release/customscene.o
 release/enemy.o
 release/explotion.o
 release/fmanager.o
@@ -12,6 +13,7 @@ release/registerwindow.o
 release/qrc_Resources.o
 release/moc_block.o
 release/moc_checkpoint.o
+release/moc_customscene.o
 release/moc_enemy.o
 release/moc_explotion.o
 release/moc_gamewindow.o

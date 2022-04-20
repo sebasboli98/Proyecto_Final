@@ -8,11 +8,16 @@
 #include <QMouseEvent>
 #include <QTimer>
 
+#include <queue>
+
 #include "fmanager.h"
 #include "block.h"
 #include "player.h"
 #include "enemy.h"
+#include "proyectile.h"
+#include "explotion.h"
 #include "checkpoint.h"
+#include "customscene.h"
 
 #include "utilities.h"
 
@@ -29,7 +34,6 @@ public:
     ~gamewindow();
 
 private:
-
     void keyPressEvent(QKeyEvent *Event);
     void keyReleaseEvent(QKeyEvent * Event);
     void mousePressEvent(QMouseEvent *Event);
@@ -58,9 +62,9 @@ private:
     QGraphicsView *GameView;
     QGraphicsView *TexturesView;
 
-    QGraphicsScene *MenuScene;
-    QGraphicsScene *GameScene;
-    QGraphicsScene *TexturesScene;
+    CustomScene *MenuScene;
+    CustomScene *GameScene;
+    CustomScene *TexturesScene;
     //QGraphicsView *View;
 
     bool m_GameRunning;
@@ -70,7 +74,9 @@ private:
     std::vector<std::pair<std::string, uint>> m_platforms;
     std::vector<std::pair<uint, std::pair<gvr::llint, int>>> m_decorations;
 
-    std::map<int, bool> m_keys;
+    explotion *Test1;
+
+    std::queue<int> m_keys;
     QTimer *m_KeyTimer;
 
 };

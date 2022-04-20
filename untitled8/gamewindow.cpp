@@ -5,7 +5,7 @@
 
 
 
-gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) ://Constructor
+gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::gamewindow),
     m_playerData(playerData_)
@@ -21,7 +21,7 @@ gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) ://Constructor
     //ui->MainView->updateGeometry();
     ui->MainView->resize(1920, 1000);
 
-    MenuScene = new QGraphicsScene();
+    MenuScene = new CustomScene();
     MenuScene->setSceneRect(0,0,1000000,5000);
 
     ui->MainView->setScene(MenuScene);
@@ -31,12 +31,18 @@ gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) ://Constructor
     pTextures[0].push_back(":/gfx/Sprites/nigga.png");
     pTextures[1].push_back(":/gfx/Sprites/niggacostao.png");
 
+    //proyectile *GCast = new proyectile(":gfx/Images/WoodBox.png");
+
     p = new player(400, 300);
     p->setTextures(pTextures);
+    p->createProyectileCast(":/gfx/Images/WoodBox.png", "");
     MenuScene->addItem(p);
+
+    Test1 = new explotion(":/gfx/Images/rexplotion.png", "");
 
     AddBlocks();
 
+    ui->MainView->scale(0.5, 0.5);
     ui->MainView->centerOn(p);
     ui->MainView->ensureVisible(p);
 
@@ -47,10 +53,12 @@ gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) ://Constructor
 
     ui->MainView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->MainView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->MainView->viewport()->setMouseTracking(true);
     //MenuView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //MenuView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    ui->label->setText("Corre Perra Corre!");
+    ui->label->setText("Una mondaa de titulo :v");
+    m_keys = {};
     m_GameRunning = false;
 
 }
@@ -60,49 +68,76 @@ gamewindow::~gamewindow()
     delete ui;
 }
 
-void gamewindow::keyPressEvent(QKeyEvent *Event){m_keys[Event->key()] = true; QWidget::keyPressEvent(Event);}
-void gamewindow::keyReleaseEvent(QKeyEvent *Event){m_keys[Event->key()] = false; QWidget::keyReleaseEvent(Event);}
+void gamewindow::keyPressEvent(QKeyEvent *Event){m_keys.push(Event->key()); QWidget::keyPressEvent(Event);}
+void gamewindow::keyReleaseEvent(QKeyEvent *Event){QWidget::keyReleaseEvent(Event);}
 
 void gamewindow::mousePressEvent(QMouseEvent *Event){
-    if(Event->button() == Qt::LeftButton)
-        p->Shoot(Event->pos().x(), Event->pos().y());
+    if(Event->button() == Qt::LeftButton){
+        //qDebug() << "ScX: " << QString::number(MenuScene->ClickPos.x());
+        //qDebug() << "ScY: " << QString::number(MenuScene->ClickPos.y());
+
+        //qDebug() << "PosX: " << QString::number(MenuScene->MousePos.x());
+        //qDebug() << "PosY: " << QString::number(MenuScene->MousePos.y());
+
+        float SceneClickPosX = MenuScene->ClickPos.x();
+        float SceneClickPosY = MenuScene->ClickPos.y();
+
+        if(proyectile *Temp = p->Shoot(SceneClickPosX, SceneClickPosY)){
+            MenuScene->addItem(Temp);
+        }
+
+
+
+        explotion *Test2 = new explotion(SceneClickPosX, SceneClickPosY, Test1);
+        ui->MainView->scene()->addItem(Test2);
+        Test2->Explode();
+    }
+
 }
 
 void gamewindow::mouseMoveEvent(QMouseEvent *Event){
-    if(p->isShootCooldownActive())
-        return;
+
+    //qDebug() << "PosX: " << QString::number(MenuScene->MousePos.x());
+    //qDebug() << "PosY: " << QString::number(MenuScene->MousePos.y());
+
+    Event->button();
 
     // Dibujar linea de apuntar
 
 }
 
-void gamewindow::AddBlocks()//
+void gamewindow::AddBlocks()
 {
 
     block *b = new block(1,0,1);
     b->setPos(400, 300);
     b->setLinealSpeed(5, -2);
     b->setLinealAcceleration(5, -5);
-    //b->setAngularSpeed(45);
+    b->setAngularSpeed(1);
 
-    MenuScene->addItem(b);
+    //MenuScene->addItem(b);
 
     for(int i = 5000; i > 0; i--){
         b = new block(1,0,0);
-        b->setPos((80 * i), 500);
+        b->setPos((80 * i), 1000);
         MenuScene->addItem(b);
     }
 
+    b = new block(1,0,0);
+    b->setPos((160), 1400);
+    b->setRotation(30);
+    MenuScene->addItem(b);
+
     for(int i = 1500; i > 0; i--){
         b = new block(1,0,0);
-        b->setPos((480 * i), 420 );
+        b->setPos((160 * i), 1420);
         MenuScene->addItem(b);
     }
 
     // Usar datos leidos
 }
 
-void gamewindow::enableCollitions(){//Jugador colisione con otros objetos
+void gamewindow::enableCollitions(){
     m_Collitions = new QTimer();
     connect(m_Collitions, &QTimer::timeout, [&](){
         // Player collitions
@@ -115,7 +150,7 @@ void gamewindow::enableCollitions(){//Jugador colisione con otros objetos
 
             if(b && b->isSolid()){
                 if((p->y() <= b->y()) &&
-                   ((p->x() - b->x()) < (b->pixmap().width() * 0.5))){
+                   ((p->x() - b->x()) < (b->pixmap().width()))){
                     p->setSpeedY(0);
                     p->setOnGround(true);
                 }
@@ -141,37 +176,52 @@ void gamewindow::enableCollitions(){//Jugador colisione con otros objetos
 void gamewindow::StartCollitions(uint t){m_Collitions->start(t);}
 void gamewindow::StopCollitions(){m_Collitions->stop();}
 
-void gamewindow::enableMovement(){ //Lista de las teclas
-    m_KeyTimer = new QTimer();//Moviemintos
+void gamewindow::enableMovement(){
+    m_KeyTimer = new QTimer();
     connect(m_KeyTimer, &QTimer::timeout, [&](){
-        ;
-        for(auto i : m_keys){
-            if(i.second)
-            switch (i.first) {
+
+        qDebug() << "PosX: " << QString::number(MenuScene->MousePos.x());
+        qDebug() << "PosY: " << QString::number(MenuScene->MousePos.y());
+        ui->label->setText(QString::number(MenuScene->MousePos.x()) + " " + QString::number(MenuScene->MousePos.y()));
+
+        while(true){
+            if(m_keys.empty())
+                break;
+
+            switch (m_keys.front()) {
             case Qt::Key_W:{
                 if(p->isSliding()){
-                    p->setSliding(false);
+                    p->setSliding(false); //
+                    m_keys.pop();
                     return;
                 }
                 if(p->onGround()){
                     p->Jump();
+                    m_keys.pop();
                     return;
                 }
+                m_keys.pop();
                 break;
             }
             case Qt::Key_A:{
-                if(p->getLinealSpeed().first > 0 && !p->isSliding())
-                    p->setAccelerationX(p->getLinealAcceleration().first - 50);
+                if(p->getLinealSpeed().first > 0 && !p->isSliding()){
+                    p->setAccelerationX(p->getLinealAcceleration().first - 4);
+                }
+                m_keys.pop();
                 break;
             }
             case Qt::Key_S:{
-                if(p->onGround())
+                if(p->onGround()){
                     p->Slide();
+                }
+                m_keys.pop();
                 break;
             }
             case Qt::Key_D:{
-                if(!p->isSliding())
-                    p->setAccelerationX(p->getLinealAcceleration().first + 20);
+                if(!p->isSliding()){
+                    p->setAccelerationX(p->getLinealAcceleration().first + 10);
+                }
+                m_keys.pop();
                 break;
             }
             case Qt::Key_Space:{
@@ -179,13 +229,25 @@ void gamewindow::enableMovement(){ //Lista de las teclas
                     p->setSliding(false);
                     p->Jump();
                 }
-                if(p->onGround())
+                if(p->onGround()){
                     p->Jump();
+                }
+                m_keys.pop();
                 break;
             }
-            default:
+            case Qt::Key_E:{
+
+                m_keys.pop();
                 break;
             }
+            default:{
+                m_keys.pop();
+                break;
+            }
+            }
+        }
+        if(p->getLinealSpeed().first < 10 && !p->isSliding()){
+            p->setAccelerationX(p->getLinealAcceleration().first + 17);
         }
     });
 }

@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     block.cpp \
     checkpoint.cpp \
+    customscene.cpp \
     enemy.cpp \
     explotion.cpp \
     fmanager.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 HEADERS += \
     block.h \
     checkpoint.h \
+    customscene.h \
     enemy.h \
     explotion.h \
     fmanager.h \
