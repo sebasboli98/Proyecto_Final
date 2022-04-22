@@ -5,9 +5,9 @@
 #include <map>
 #include <array>
 
+#include "gamewindow.h"
 #include "fmanager.h"
 #include "utilities.h"
-#include "gamewindow.h"
 
 namespace Ui {
 class registerwindow;
@@ -18,25 +18,26 @@ class registerwindow : public QDialog
     Q_OBJECT
 
 public:
-    explicit registerwindow(bool mode_, QWidget *parent = nullptr); //Constructor que recibe si esta registrando o ingresando.
-    ~registerwindow(); //mode_ boolenao que determina el modo
+    explicit registerwindow(bool mode_, QWidget *parent = nullptr);
+    ~registerwindow();
 
 private:
-    bool loginUser(std::string UserName_, std::string UserPass_); //funcion utilizada para verificar si el usuario existe y los datos son validos.
-    bool registerUser(std::string UserName_, std::string Pass_, std::string Mail_);//verifica si los datos estan disponibles para crear una nueva cuenta
+    bool loginUser(std::string UserName_, std::string UserPass_);
+    bool registerUser(std::string UserName_, std::string Pass_, std::string Mail_);
 
 private slots:
-    void on_Continue_clicked(); //funcion que recibe el boton de continuar
-    void on_Exit_clicked();  //funcion que recibe el boton de salir
-private:
-    Ui::registerwindow *ui; //variable de la clase
-    gamewindow *gw;         //variable de la ventana del juego
-    fmanager *m_fmanager;   //manejador de archivos
+    void on_Continue_clicked();
+    void on_Exit_clicked();
 
-    gvr::udat m_usersData; //  datos de los usuarios - {Sebas1778021;1778021;Sebas;sebasboli98@gmail.com;7;1;69069}
+private:
+    Ui::registerwindow *ui;
+    gamewindow *gw;
+    fmanager *m_fmanager;
+
+    gvr::udat m_usersData; // Username {Pass, Email}
     std::vector<std::string> m_levelData;
 
-    bool m_mode; //modo si entra como registro o ingreso.
+    bool m_mode;
 
 };
 
