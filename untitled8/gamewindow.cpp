@@ -20,12 +20,13 @@ gamewindow::gamewindow(gvr::udpair playerData_, gvr::udat allData_, QWidget *par
     //ui->MainView->setWindowState(Qt::WindowMaximized);
     //ui->MainView->updateGeometry();
     ui->MainView->resize(1920, 1000); // Me rendí
-    ui->MainView->scale(1.5,1.5);
+
 
     MenuScene = new CustomScene();
-    MenuScene->setBackgroundBrush(QBrush(QImage(":/gfx/Images/Fondo.jpg")));
+    MenuScene->setBackgroundBrush(QBrush(QImage(":/gfx/Images/Fondo.jfif")));
     MenuScene->setSceneRect(0, 0, 1920, 1000);
     ui->MainView->setScene(MenuScene);
+    //ui->MainView->scale(0.3,0.3);
 
     AddWidgets();
 
@@ -255,7 +256,10 @@ void gamewindow::AddPlayer(){
     PEC->setSizeMin(60, 60);
     PEC->setSizeMax(180, 180);
 
-    auto Pos_ = m_Checkpoints[m_playerData.second[1]]->getRespawn();
+    auto Pos_ = gvr::vec2d(400, 1350);
+        if(m_playerData.second[1]){
+            Pos_ = m_Checkpoints[m_playerData.second[1] - 1]->getRespawn();
+        }
 
     m_Player = new player(Pos_.first, Pos_.second);
     m_Player->setTextures(pTextures);
@@ -272,9 +276,10 @@ void gamewindow::AddWidgets(){
     m_Buttons.push_back(new QPushButton("Supervivencia (WIP)", this));
     m_Buttons.push_back(new QPushButton("Salir", this));
 
-    m_Buttons[0]->setGeometry((MenuScene->width() * 0.5f) - 250, MenuScene->height() * 0.4f, 500, 100);
-    m_Buttons[1]->setGeometry((MenuScene->width() * 0.5f) - 250, MenuScene->height() * 0.6f, 500, 100);
-    m_Buttons[2]->setGeometry((MenuScene->width() * 0.5f) - 250, MenuScene->height() * 0.8f, 500, 100);
+                                       // pos x                             pos y          ancho alto
+    m_Buttons[0]->setGeometry((MenuScene->width() * 0.5f) - 400, MenuScene->height() * 0.2f, 250, 75);
+    m_Buttons[1]->setGeometry((MenuScene->width() * 0.5f) - 400, MenuScene->height() * 0.3f, 250, 75);
+    m_Buttons[2]->setGeometry((MenuScene->width() * 0.5f) - 400, MenuScene->height() * 0.5f, 250, 75);
 
     //m_Buttons[0]->setIcon(QIcon(":/gfx/Images/wtabla.png"));// ":/gfx/Images/wtabla.png"
     //m_Buttons[1]->setIcon(QIcon(":/gfx/Images/wtabla.png"));
@@ -288,9 +293,12 @@ void gamewindow::AddWidgets(){
     connect(m_Buttons[1], SIGNAL(clicked()), this, SLOT(SurvivalButton()));
     connect(m_Buttons[2], SIGNAL(clicked()), this, SLOT(ExitButton()));
 
+
     MenuScene->addWidget(m_Buttons[0]);
-    MenuScene->addWidget(m_Buttons[1]);
+    //MenuScene->addWidget(m_Buttons[1]);
     MenuScene->addWidget(m_Buttons[2]);
+    m_Buttons[1]->hide();
+
 }
 
 void gamewindow::RemoveBlocks(){
@@ -317,9 +325,10 @@ void gamewindow::enableCollitions(){
         // Player collitions
 
         if(m_Player->getHP() <= 0){
-            m_Player->setPos(400, 1400);
-            if(m_playerData.second[1] > 0){
-                auto pos_ = m_Checkpoints[m_playerData.second[1]]->getRespawn(); m_Player->setPos(pos_.first, pos_.second);
+            m_Player->setPos(400, 1350);
+            if(m_playerData.second[1] >= 1){
+                auto pos_ = m_Checkpoints[m_playerData.second[1] - 1]->getRespawn();
+                m_Player->setPos(pos_.first, pos_.second);
             }
 
             m_Player->setHP(1000);
@@ -606,7 +615,7 @@ void gamewindow::CampaignButton(){
 
     GameScene = new CustomScene();
     GameScene->setSceneRect(0,0,1000000,5000);
-    GameScene->setBackgroundBrush(QBrush(QImage(":/gfx/Images/Fondo.jpg").scaled(1920, 1000)));
+    GameScene->setBackgroundBrush(QBrush(QImage(":/gfx/Images/Fondo.jfif").scaled(1920, 1000)));
 
     enableCollitions();
     StartCollitions(16);
@@ -620,7 +629,7 @@ void gamewindow::CampaignButton(){
     AddEntities();
 
     ui->MainView->setScene(GameScene);
-    ui->MainView->scale(0.1, 0.1);
+    ui->MainView->scale(0.3, 0.3);
     m_GameRunning = true;
 }
 

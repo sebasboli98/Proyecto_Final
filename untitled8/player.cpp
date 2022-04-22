@@ -13,18 +13,19 @@ player::player(float px, float py, QGraphicsItem *parent[[maybe_unused]]){
     m_TexturesUsing = 0;
 
     m_Mass = 90; // Kg
-    m_DragQ = 0.8f;
-    m_FrictionQS = 0.95f;
-    m_FrictionQD = 0.85f;
-    m_TransversalAreaX = 0.9f; // m^2
-    m_TransversalAreaY = 0.175f; // m^2
+    m_DragQ = 0.8f;            //coeficiente de arrastre aerodinamica
+    m_FrictionQS = 0.95f;      // coegiciente de friccion estatico           //ROZAMIENTO CON LA SUPERFICIE.
+    m_FrictionQD = 0.85f;      // coegiciente de friccion dinamica
+
+    m_TransversalAreaX = 0.9f; // m^2              //area expuesta en desplazamiento horizontal
+    m_TransversalAreaY = 0.175f; // m^2            //area expuesta en desplazamiento vertical        //AERODINAMICA
     m_Hitpoints = 1000;
 
-    m_Gravity = 9.81f; // m/s^2
-    m_MediumD = 1.21f; // Kg/m^2 air
+    m_Gravity = 9.81f; // m/s^2        //GRAVEDAD
+    m_MediumD = 1.21f; // Kg/m^2 air   //DENSIDAD DEL MEDIO
 
     setPos(px, py);
-    m_Sl = {0, 0};
+    m_Sl = {0, 0};  //VELOCIDADES, ACELEARACION
     m_Al = {0, 0};
 
     m_PCast = nullptr;
@@ -38,18 +39,18 @@ player::player(float px, float py, QGraphicsItem *parent[[maybe_unused]]){
 
 }
 
-void player::Move(float Dt){
+void player::Move(float Dt){             //MOVIMIENTO SUMATORIA DE FUERZAS!
     { /// Y Movement
-        short modifier = ((m_Al.second <= 0) * 2) - 1;
+        short modifier = ((m_Al.second <= 0) * 2) - 1; //variable que indica la direccion de la fuerzas contrarias
 
-        float ma = m_Mass * m_Al.second;
-        float w = m_Mass * m_Gravity;
-        float n = m_Mass * m_Gravity * onGround();
-        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalAreaY * mo::exp(m_Sl.second, 2) * modifier;
+        float ma = m_Mass * m_Al.second;  //masa * aceleracion
+        float w = m_Mass * m_Gravity;     //peso
+        float n = m_Mass * m_Gravity * onGround(); //fuerza normal
+        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalAreaY * mo::exp(m_Sl.second, 2) * modifier; //fuerza de arrastre
 
 
-        float ar = (ma - fd + w - n) / m_Mass;
-        m_Al.second = ar * Dt;
+        float ar = (ma - fd + w - n) / m_Mass;  //sumatoeria de fuerzas diviendon masa para obtener la aceleracion
+        m_Al.second = ar * Dt;   //delta tiempo
         m_Sl.second += m_Al.second;
 
         if(onGround() && m_Sl.second < 0){
@@ -58,26 +59,26 @@ void player::Move(float Dt){
         else if(!onGround()){
             setY(y() + m_Sl.second);
         }
-        //m_Sl.second > 0? setY(y() + (m_OnGround * m_Sl.second * Dt)) : setY(y() + m_Sl.second * Dt);
+
     }
-    { /// X Movement
+    { /// MOVIMIENTO EN X
 
         m_FrictionQD *= onGround();
         m_FrictionQS *= onGround();
 
+        //variable que indica la direccion de la fuerzas contrarias (MODIFICADOR)
         short modifier = ((m_Sl.first <= 0) * 2) - 1; // m_Sl.first > 0? 1 : -1;
 
-        float ma = m_Mass * m_Al.first * onGround();
-        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalAreaX * mo::exp(m_Sl.first, 3) * modifier;
-        float frS = m_Mass * m_Gravity * m_FrictionQS * modifier;
-        float frD = m_Mass * m_Gravity * m_FrictionQD * modifier;
-
-        //mo::abs(ma) < mo::abs(fd+frS)? 0 : ((ma - (fd + frD)) / m_Mass);
-        float ar = ((mo::abs(ma) > mo::abs(frS))) * ((ma - (fd + frD)) / m_Mass);
+        float ma = m_Mass * m_Al.first * onGround(); //masa * aceleracion
+        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalAreaX * mo::exp(m_Sl.first, 3) * modifier; //fuerza de arrastre
+        float frS = m_Mass * m_Gravity * m_FrictionQS * modifier; //Friccion estatica
+        float frD = m_Mass * m_Gravity * m_FrictionQD * modifier; //FRICCION DINAMICA
+        //comparacion de friccacion estatica mayor a a la acelearion del cuerpo no hay movimiento.
+        float ar = ((mo::abs(ma) > mo::abs(frS))) * ((ma - (fd + frD)) / m_Mass); //acelearacion resultante por sumatoria de fuerzas
 
         ar = (!ar && m_Sl.first)? ((fd + frD) / m_Mass) : ar;
 
-        if(mo::abs(m_Sl.first) < 0.05f && ((isSliding() && mo::abs(ar) < 3) || (!isSliding() && mo::abs(ar) < 8.34f))){
+        if(mo::abs(m_Sl.first) < 0.05f && ((isSliding() && mo::abs(ar) < 3) || (!isSliding() && mo::abs(ar) < 8.34f))){// verificacion de  no movimmiento
             m_Sl.first = 0;
             ar = 0;
         }
@@ -103,7 +104,7 @@ void player::Move(float Dt){
 }
 void player::Jump(){
     //setUsingTextures(3);
-    setAccelerationY(-350);
+    setAccelerationY(-420);
 }
 void player::Slide(){setSliding(true);}
 proyectile *player::Shoot(float x_, float y_){
@@ -135,20 +136,23 @@ void player::Collition(float OtherMass_, float RestitutionQ_, gvr::vec2d OtherVl
     //gvr::vec2d P1 [[maybe_unused]] = {m_Mass * m_Sl.first, m_Mass * m_Sl.second};
     //gvr::vec2d P2 [[maybe_unused]] = {OtherMass_ * OtherVl_.first, OtherMass_ * OtherVl_.second};
 
-    //gvr::vec2d Pt [[maybe_unused]] = {P1.first + P2.first, P1.second + P2.second};
-    float TRQ = RestitutionQ_ * 0.5f;
 
-    //gvr::vec2d Vr [[maybe_unused]] = {TRQ * (m_Sl.first - OtherVl_.first), TRQ * (m_Sl.second - OtherVl_.second)};
+    float TRQ = RestitutionQ_ * 0.5f; //coeficiente de restitucion de la colicion.
+
+    //colicion encntrada por momentos lineales
+    //primero se despejo U2 (vel final del otro objeto) en terminos de U1 V1 V2 TRQ
+    //se reemplaza en la eccacion del momento lineal y se despeja U1, se simplifica (empleando wolfrham)
+
 
     gvr::vec2d U1 = {(((m_Mass - (TRQ * OtherMass_)) * m_Sl.first) - ((TRQ - 1) * OtherMass_* OtherVl_.first)) * mo::oneOver(m_Mass + OtherMass_)
                             , (((m_Mass - (TRQ * OtherMass_)) * m_Sl.second) - ((TRQ - 1) * OtherMass_* OtherVl_.second)) * mo::oneOver(m_Mass + OtherMass_)};
 
-    m_Sl = U1;
-    float U1Mag = mo::Sqrt(mo::exp(U1.first, 2) + mo::exp(U1.second, 2));
-    Damage(0.5f * OtherMass_ * mo::exp(U1Mag, 2));
+    m_Sl = U1; //variable auxiiliar
+    float U1Mag = mo::Sqrt(mo::exp(U1.first, 2) + mo::exp(U1.second, 2)); //magnitud vector velocidad de U1
+    Damage(0.5f * OtherMass_ * mo::exp(U1Mag, 2)); //se entrega energia cinetica 1/2mgV^2
     return;
 }
-void player::Collition(float ExplotionForce_, gvr::vec2d Pos_){
+void player::Collition(float ExplotionForce_, gvr::vec2d Pos_){ //explosion afecta inversamente a la distancia
 
     float dx = x() - Pos_.first;
     float dy = y() - Pos_.second;
