@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include <QGraphicsScene>
 
 #include <proyectile.h>
 
@@ -17,7 +18,7 @@ public:
 
     void Move(float Dt);
     void PorsuitObjective();
-    void Shoot();
+    proyectile *Shoot();
 
     void Collition(float OtherMass_, float RestitutionQ_, gvr::vec2d OtherVl_);
     void Collition(float ExplotionForce_, gvr::vec2d Pos_);
@@ -31,9 +32,13 @@ public:
     float getFrictionQD();
     float getTransversalAreaX();
     float getTransversalAreaY();
+    float getHitpoints();
 
     gvr::vec2d getLinealSpeed();
     gvr::vec2d getLinealAcceleration();
+
+    QGraphicsItem *getObjective();
+    proyectile *getAmmo();
 
     void setOnGround(bool State_);
     void setShootCooldownActive(bool State_);
@@ -107,7 +112,6 @@ private:
 
     QGraphicsItem *m_Objective;
     proyectile *m_Ammo;
-    std::vector<std::string> m_AmmoProperties;
     QTimer *m_UpdateTimer;
 
 };

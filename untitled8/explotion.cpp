@@ -2,7 +2,7 @@
 
 explotion::explotion(std::string Texture_, std::string Sound_, QGraphicsItem *parent){
 
-    setEnergy(10000);
+    setEnergy(0);
     setDuration(100);
 
     setSizeMin(60, 60);
@@ -77,7 +77,7 @@ std::string explotion::getTexture(){return m_Texture;}
 std::string explotion::getSound(){return m_Sound;}
 
 bool explotion::wasAffect(QGraphicsItem *Object_){
-    if(m_Affected.find(Object_)->second){
+    if(m_Affected.find(Object_) != m_Affected.end() && m_Affected.find(Object_)->second){
           return true;
     }
     return false;

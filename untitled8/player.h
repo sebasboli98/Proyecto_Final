@@ -59,7 +59,7 @@ public:
     void setTransversalAreaY(float NewTransversalArea_);
     void setHP(float);
 
-    void createProyectileCast(std::string Texture_, std::string Sound_);
+    void createProyectileCast(std::string Texture_, std::string Sound_, explotion *ECast_);
     void setProyectileCast(proyectile *PCast_);
 
     void setMediumD(float NewMediumD_);
@@ -86,6 +86,7 @@ public:
 
     void UpdateTextures(); //
     void Damage(double Force);
+    void Die();
 
 private slots:
     virtual void Update();

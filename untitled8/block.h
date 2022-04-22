@@ -16,81 +16,87 @@ class block: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    block(bool Solid_, bool Breakable_, bool Movable_, QGraphicsItem *parent = nullptr);//Constructor
+    block(bool Solid_, bool Breakable_, bool Movable_, QGraphicsItem *parent = nullptr);
 
-    void Move(float Dt);  //Movimientos(fisicas)
-    void Rotate(float Dt); //Rotar
+    void Move(float Dt);
+    void Rotate(float Dt);
 
-    void Collition(float OtherMass_, float OtherRestitutionQ_, gvr::vec2d OtherVl_);   // interacciones con otros obejtos
-    void Collition(float ExplotionForce_, gvr::vec2d Pos_); //Explosiones
+    void Collition(float OtherMass_, float OtherRestitutionQ_, gvr::vec2d OtherVl_);
+    void Collition(float ExplotionForce_, gvr::vec2d Pos_);
 
+    //template<typename ... Floats, typename ... Pairs>
+    //void Collition(Floats ... floats, Pairs ... pairs);
 
-    bool isSolid(); // Bloque solido
-    bool isBreakable(); // si se puede o no romper
-    bool isMovable(); //si se puede mover
-    bool OnGround(); //Si esta sobre el suelo
+    //void Collition(float Mass_, float Vw_, gvr::vec2d Pos_, gvr::vec2d Vxy_);
+    //void Collition(float Momentum_, gvr::vec2d Pos_);
 
-    float getMass();        //Obtener masa
-    float getDragQ();       //Coeficiente de arrastre
-    float getFrictionQS();  //Friccion estatica
-    float getFrictionQD();   //Friccion dinamica
-    float getRestitutionQ();      //Coeficiente de restitucion
-    float getTransversalArea();   //Area con que choca con el aire
+    bool isSolid();
+    bool isBreakable();
+    bool isMovable();
+    bool OnGround();
 
-    gvr::vec2d getLinealSpeed();        //Velocidad normal x y y
-    gvr::vec2d getLinealAcceleration();    //acelaracion en x y y
-    float getAngularSpeed();               //Velocidad angular
-    float getAngularAcceleration();         //Aceleracion angular
+    float getMass();
+    float getDragQ();
+    float getFrictionQS();
+    float getFrictionQD();
+    float getRestitutionQ();
+    float getTransversalArea();
+    float getHitpoints();
 
-    void setOnGround(bool State_);  // si esta en el suelo o no
+    gvr::vec2d getLinealSpeed();
+    gvr::vec2d getLinealAcceleration();
+    float getAngularSpeed();
+    float getAngularAcceleration();
 
-    void setMass(float NewMass_);   //Masa
-    void setDragQ(float NewDrag_);      //Arrastre
-    void setFrictionQS(float NewSQF_);      //Friccion estatica
-    void setFrictionQD(float NewDQF_);      //Dinamica
-    void setRestitutionQ(float NewRestitutionQ_);       //Coeficiente de restitucion
+    void setOnGround(bool State_);
+
+    void setMass(float NewMass_);
+    void setDragQ(float NewDrag_);
+    void setFrictionQS(float NewSQF_);
+    void setFrictionQD(float NewDQF_);
+    void setRestitutionQ(float NewRestitutionQ_);
     void setTransversalArea(float NewTransversalArea_);
-    void setThoughtness(float NewThoughtness_);     //Dureza
-    void setHP(float);      //Vida de la caja
+    void setThoughtness(float NewThoughtness_);
+    void setHP(float);
 
-    void setMediumD(float NewMediumD_);     //Densidad del aire
-    void setGravity(float NewGravity_);     //Gravedad
+    void setMediumD(float NewMediumD_);
+    void setGravity(float NewGravity_);
 
-    void setTextures(std::array<std::string, 3> TexturesDirs_); //Texturas para la caja
-    void setSounds(std::array<std::string, 3> SoundsDirs_); //Sonidos
+    void setTextures(std::array<std::string, 3> TexturesDirs_);
+    void setSounds(std::array<std::string, 3> SoundsDirs_);
 
-    void setLinealSpeed(gvr::vec2d NewSl_); //Velocidad x y
+    void setLinealSpeed(gvr::vec2d NewSl_);
     void setLinealSpeed(float Sx, float Sy);
-    void setSpeedX(float Sx); //velocidad x
-    void setSpeedY(float Sy); //velocidad y
+    void setSpeedX(float Sx);
+    void setSpeedY(float Sy);
 
-    void setLinealAcceleration(gvr::vec2d NewAl_);  //Aceleracion x y
+    void setLinealAcceleration(gvr::vec2d NewAl_);
     void setLinealAcceleration(float Ax, float Ay);
     void setAccelerationX(float Ax);
     void setAccelerationY(float Ay);
 
-    void setAngularSpeed(float NewSw_);     //Velocidad angular
-    void setAngularAcceleration(float NewAw_);      //Acelearacion angular
+    void setAngularSpeed(float NewSw_);
+    void setAngularAcceleration(float NewAw_);
 
-    void UpdateStart(float);    //Temporizador empezar
-    void UpdateStop();      //Temporizador terminar
+    void UpdateStart(float);
+    void UpdateStop();
 
 private:
-    void ChangeTexture(int);        //Cambiar texturas
-    void ReproduceSound(int);       //Reproducir sonido
+    void ChangeTexture(int);
+    void ReproduceSound(int);
 
-    void Damage(double Force);      //Recibir daño por ipacto
+    void Damage(double Energy);
+    void Die();
 
-private slots://Funciones conectables a un temporizador
-    virtual void Update();          //actualiza el estado del objeto
+private slots:
+    virtual void Update();
 
-private: //Variables de atributos
+private:
     bool m_Solid;
     bool m_Breakable;
     bool m_Movable;
     bool m_OnGround;
 
-    //Magnitudes fisicas
     float m_Mass;
     float m_DragQ;
     float m_FrictionQS;
@@ -105,8 +111,8 @@ private: //Variables de atributos
 
     gvr::vec2d m_Sl;
     gvr::vec2d m_Al;
-    float m_Sw; // Grados
-    float m_Aw;
+    float m_Sw; // Deg
+    float m_Aw; // Deg
 
     std::array<std::string, 3> m_Textures;
     std::array<std::string, 3> m_Sounds;

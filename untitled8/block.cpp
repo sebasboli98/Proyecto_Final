@@ -11,7 +11,7 @@ block::block(bool Solid_, bool Breakable_, bool Movable_, [[maybe_unused]] QGrap
     m_FrictionQD = 0.62f;
     m_RestitutionQ = 0.6f; // 1 - 0
     m_TransversalArea = 1; // m^2
-    m_Hitpoints = 1000;
+    m_Hitpoints = 100;
     m_Thoughtness = 5.8f;
 
     m_Gravity = 9.81f; // m/s^2
@@ -26,10 +26,10 @@ block::block(bool Solid_, bool Breakable_, bool Movable_, [[maybe_unused]] QGrap
     m_Textures = {":/gfx/Images/Wood-SteelBox.png", "", ""};
     m_Sounds = {"", "", ""};
 
-    setPixmap(QPixmap(m_Textures[0].c_str()).scaled(80, 80));//Colocar la imagen
+    setPixmap(QPixmap(m_Textures[0].c_str()).scaled(80, 80));
     setTransformOriginPoint(x() + pixmap().width() * 0.5, y() - pixmap().height() * 0.5);
 
-    if(m_Movable){   //verificar si se puede mover o no
+    if(m_Movable){
         m_UpdateTimer = new QTimer();
         connect(m_UpdateTimer, SIGNAL(timeout()), this, SLOT(Update()));
         UpdateStart(16);
@@ -37,72 +37,78 @@ block::block(bool Solid_, bool Breakable_, bool Movable_, [[maybe_unused]] QGrap
 }
 
 void block::Move(float Dt){
-    { /// Movimientos en Y
-        short modifier = ((m_Sl.second >= 0) * 2) - 1; //verifica la direccion de la fuerza contraria
+    { /// Y Movement
+        short modifier = ((m_Sl.second >= 0) * 2) - 1;
 
-        float ma = m_Mass * m_Al.second; //Fuerza
-        float w = m_Mass * m_Gravity;       //Peso
-        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalArea * mo::exp(m_Sl.second, 2) * modifier;//Fuerza de arrastre
+        float ma = m_Mass * m_Al.second;
+        float w = m_Mass * m_Gravity;
+        float n = m_Mass * m_Gravity * OnGround();
+        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalArea * mo::exp(m_Sl.second, 2) * modifier;
 
 
-        float ar = (ma - fd + w) / m_Mass; //Aceleracion resultante
+        float ar = (ma - fd + w - n) / m_Mass;
         m_Al.second = ar * Dt;
         m_Sl.second += m_Al.second;
         setY(y() + m_Sl.second);
         //m_Sl.second > 0? setY(y() + (m_OnGround * m_Sl.second * Dt)) : setY(y() + m_Sl.second * Dt);
 
     }
-    { //Movimiento en X
-        if(!OnGround()){ //Verifico si esta en el suelo
+    { /// X Movement
+        if(!OnGround()){
             m_FrictionQD = 0.0f;
             m_FrictionQS = 0.0f;
         }
 
-        short modifier = ((m_Sl.first >= 0) * 2) - 1; // Verfica la direccion
+        short modifier = ((m_Sl.first >= 0) * 2) - 1; // m_Sl.first > 0? 1 : -1;
 
         float ma = m_Mass * m_Al.first;
         float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalArea * mo::exp(m_Sl.first, 2) * modifier;
-        float frS = m_Mass * m_Gravity * m_FrictionQS * modifier; //modificando
+        float frS = m_Mass * m_Gravity * m_FrictionQS * modifier;
         float frD = m_Mass * m_Gravity * m_FrictionQD * modifier;
 
-        float ar = (!(mo::abs(ma) < mo::abs(fd+frS))) * ((ma - (fd + frD)) / m_Mass); // Aceleracion resultante
+        float ar = (!(mo::abs(ma) < mo::abs(fd+frS))) * ((ma - (fd + frD)) / m_Mass); // mo::abs(ma) < mo::abs(fd+frS)? 0 : ((ma - (fd + frD)) / m_Mass);
         m_Al.first = ar * Dt;
         m_Sl.first += m_Al.first;
         setX(x() + m_Sl.first);
     }
 
     m_OnGround = false;
-    m_FrictionQS = 0.8f; //Restablezco valores de friccion
+    m_FrictionQS = 0.8f;
     m_FrictionQD = 0.62f;
 
 }
 
 void block::Rotate(float Dt){
 
-    setRotation(m_Sw * Dt);
+    static float Rotation = 0;
+    setRotation(Rotation * Dt);
+    Rotation += m_Sw;
+    if(Rotation >= 360) Rotation -= 360;
 
 }
 
 void block::Collition(float OtherMass_, float OtherRestitutionQ_, gvr::vec2d OtherVl_){
 
-    gvr::vec2d P1 [[maybe_unused]] = {m_Mass * m_Sl.first, m_Mass * m_Sl.second};
-    gvr::vec2d P2 [[maybe_unused]] = {OtherMass_ * OtherVl_.first, OtherMass_ * OtherVl_.second};
-
-    gvr::vec2d Pt [[maybe_unused]] = {P1.first + P2.first, P1.second + P2.second};
     float TRQ = (OtherRestitutionQ_ + m_RestitutionQ) * 0.5f;
-
-    gvr::vec2d Vr [[maybe_unused]] = {TRQ * (m_Sl.first - OtherVl_.first), TRQ * (m_Sl.second - OtherVl_.second)};
 
     gvr::vec2d U1 = {(((m_Mass - (TRQ * OtherMass_)) * m_Sl.first) - ((TRQ - 1) * OtherMass_* OtherVl_.first)) * mo::oneOver(m_Mass + OtherMass_)
                             , (((m_Mass - (TRQ * OtherMass_)) * m_Sl.second) - ((TRQ - 1) * OtherMass_* OtherVl_.second)) * mo::oneOver(m_Mass + OtherMass_)};
 
     m_Sl = U1;
+    Damage(0.5f * OtherMass_ * (mo::exp(U1.first, 2) + mo::exp(U1.second, 2)));
     return;
 }
 
 void block::Collition(float ExplotionForce_, gvr::vec2d Pos_){
-    m_Al.first += ExplotionForce_ / (m_Mass * mo::exp(Pos_.first, 2));
-    m_Al.second += ExplotionForce_ / (m_Mass * mo::exp(Pos_.second, 2));
+    float dx = x() - Pos_.first;
+    float dy = y() - Pos_.second;
+
+    float invMag = mo::invSqrt(mo::exp(dx, 2) + mo::exp(dy, 2));
+    float effect = ExplotionForce_ * invMag;
+
+    m_Sl.first += (ExplotionForce_ / mo::exp(dx, 2)) * (dx > 0? 1 : -1);
+    m_Sl.second += ExplotionForce_ / mo::exp(dy, 2) * (dy > 0? 1 : -1);
+    Damage(effect);
 }
 
 bool block::isSolid(){return m_Solid;}
@@ -116,6 +122,7 @@ float block::getFrictionQS(){return m_FrictionQS;}
 float block::getFrictionQD(){return m_FrictionQD;}
 float block::getRestitutionQ(){return m_RestitutionQ;}
 float block::getTransversalArea(){return m_TransversalArea;}
+float block::getHitpoints(){return m_Hitpoints;}
 
 gvr::vec2d block::getLinealSpeed(){return m_Sl;}
 gvr::vec2d block::getLinealAcceleration(){return m_Al;}
@@ -155,15 +162,57 @@ void block::setAngularAcceleration(float NewAw_){m_Aw = NewAw_;}
 void block::UpdateStart(float t){m_UpdateTimer->start(t);}
 void block::UpdateStop(){m_UpdateTimer->stop();}
 
+void block::Damage(double Energy){
+    m_Hitpoints -= mo::abs(Energy);
+
+    if(m_Hitpoints <= 0)
+        Die();
+}
+
+void block::Die(){
+    UpdateStop();
+    m_Hitpoints = 0;
+}
 
 
+
+//gvr::vec2d Vxy_, gvr::vec2d Vw_ = {0,0}
+//template<typename ... Floats, typename ... Pairs>
+//[[deprecated("Use specialization")]]
+//void block::Collition(Floats ... floats, Pairs ... pairs){
+//    Collition(floats ..., pairs ...);
+//    return;
+//}
+//
+//
+//void block::Collition(float Mass_, float Vw_, gvr::vec2d Vl_, gvr::vec2d Pos_){
+//    float pl = Mass_ * mo::Sqrt(mo::exp(Vl_.first,2) + mo::exp(Vl_.second,2));
+//    float pw = Mass_ * Vw_;
+//
+//    float a = 0;
+//    //float vt = (this->pixmap().width() * 0.5f) * Vw_;
+//    Collition(pl + pw, Pos_);
+//    return;
+//}
+//
+//template<>
+//void block::Collition(float Momentum_, gvr::vec2d Pos_){
+//
+//
+//    return;
+//}
 
 void block::Update(){
     setTransformOriginPoint(x() + pixmap().width() * 0.5, y() - pixmap().height() * 0.5);
     if(m_Movable){
-        Move(0.016f); //
+        Move(0.016f); // 60 updates per second 0.016f
         Rotate(0.016f);
     }
     return;
 }
+
+
+
+
+
 

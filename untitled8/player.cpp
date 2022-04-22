@@ -62,8 +62,6 @@ void player::Move(float Dt){
     }
     { /// X Movement
 
-
-
         m_FrictionQD *= onGround();
         m_FrictionQS *= onGround();
 
@@ -96,7 +94,7 @@ void player::Move(float Dt){
     }
 
     if(!scene()->views().isEmpty())
-        scene()->views().first()->centerOn(x() + 900, y() - 800);
+        scene()->views().first()->centerOn(x() + 800, y() - 800);
 
     setOnGround(false);
     m_FrictionQS = (isSliding() * 0.65f) + (!isSliding() * 0.95f);
@@ -110,7 +108,7 @@ void player::Jump(){
 void player::Slide(){setSliding(true);}
 proyectile *player::Shoot(float x_, float y_){
 
-    if(isShootCooldownActive())
+    if(isShootCooldownActive() && getHP())
         return nullptr;
 
     float ThrowPosX = this->x() + 77;
@@ -123,7 +121,7 @@ proyectile *player::Shoot(float x_, float y_){
     ax = invMag * ax * mo::abs(ax) * -1;
     ay = invMag * ay * mo::abs(ay) * -1;
 
-    auto Temp = new proyectile(ThrowPosX, ThrowPosY, m_PCast);
+    auto Temp = new proyectile(ThrowPosX + 10, ThrowPosY - 10, m_PCast);
     Temp->setLinealAcceleration(ax, ay);
     Temp->setLinealSpeed(getLinealSpeed().first + ax*0.1, getLinealSpeed().second + ay*0.1);
 
@@ -134,18 +132,20 @@ proyectile *player::Shoot(float x_, float y_){
 }
 
 void player::Collition(float OtherMass_, float RestitutionQ_, gvr::vec2d OtherVl_){
-    gvr::vec2d P1 [[maybe_unused]] = {m_Mass * m_Sl.first, m_Mass * m_Sl.second};
-    gvr::vec2d P2 [[maybe_unused]] = {OtherMass_ * OtherVl_.first, OtherMass_ * OtherVl_.second};
+    //gvr::vec2d P1 [[maybe_unused]] = {m_Mass * m_Sl.first, m_Mass * m_Sl.second};
+    //gvr::vec2d P2 [[maybe_unused]] = {OtherMass_ * OtherVl_.first, OtherMass_ * OtherVl_.second};
 
-    gvr::vec2d Pt [[maybe_unused]] = {P1.first + P2.first, P1.second + P2.second};
+    //gvr::vec2d Pt [[maybe_unused]] = {P1.first + P2.first, P1.second + P2.second};
     float TRQ = RestitutionQ_ * 0.5f;
 
-    gvr::vec2d Vr [[maybe_unused]] = {TRQ * (m_Sl.first - OtherVl_.first), TRQ * (m_Sl.second - OtherVl_.second)};
+    //gvr::vec2d Vr [[maybe_unused]] = {TRQ * (m_Sl.first - OtherVl_.first), TRQ * (m_Sl.second - OtherVl_.second)};
 
     gvr::vec2d U1 = {(((m_Mass - (TRQ * OtherMass_)) * m_Sl.first) - ((TRQ - 1) * OtherMass_* OtherVl_.first)) * mo::oneOver(m_Mass + OtherMass_)
                             , (((m_Mass - (TRQ * OtherMass_)) * m_Sl.second) - ((TRQ - 1) * OtherMass_* OtherVl_.second)) * mo::oneOver(m_Mass + OtherMass_)};
 
     m_Sl = U1;
+    float U1Mag = mo::Sqrt(mo::exp(U1.first, 2) + mo::exp(U1.second, 2));
+    Damage(0.5f * OtherMass_ * mo::exp(U1Mag, 2));
     return;
 }
 void player::Collition(float ExplotionForce_, gvr::vec2d Pos_){
@@ -156,8 +156,8 @@ void player::Collition(float ExplotionForce_, gvr::vec2d Pos_){
     float invMag = mo::invSqrt(mo::exp(dx, 2) + mo::exp(dy, 2));
     float effect = ExplotionForce_ * invMag;
 
-    m_Al.first += ExplotionForce_ / (m_Mass * mo::exp(Pos_.first, 2));
-    m_Al.second += ExplotionForce_ / (m_Mass * mo::exp(Pos_.second, 2));
+    m_Sl.first += (ExplotionForce_ / mo::exp(dx, 2)) * (dx > 0? 1 : -1);
+    m_Sl.second += ExplotionForce_ / mo::exp(dy, 2) * (dy > 0? 1 : -1);
     Damage(effect);
 }
 
@@ -208,7 +208,7 @@ void player::setTransversalAreaX(float NewTransversalArea_){m_TransversalAreaX =
 void player::setTransversalAreaY(float NewTransversalArea_){m_TransversalAreaY = NewTransversalArea_;}
 void player::setHP(float NewHitpoints_){m_Hitpoints = NewHitpoints_;}
 
-void player::createProyectileCast(std::string Texture_, std::string Sound_){
+void player::createProyectileCast(std::string Texture_, std::string Sound_, explotion *ECast_){
     m_PCast = new proyectile(Texture_, Sound_);
     m_PCast->setMass(1.5f);
     m_PCast->setDragQ(0.6f);
@@ -216,6 +216,8 @@ void player::createProyectileCast(std::string Texture_, std::string Sound_){
     m_PCast->setGravity(getGravity());
     m_PCast->setMediumD(getMediumD());
     m_PCast->setScale(20, 20);
+    m_PCast->setExplotionCast(ECast_);
+
 }
 void player::setProyectileCast(proyectile *PCast_){m_PCast = std::move(PCast_);}
 
@@ -272,7 +274,15 @@ void player::UpdateTextures(){
     (pos == limit) && (pos = limit); // Argument Evaluation Order
 
 }
-void player::Damage(double Force[[gnu::unused]]){
+void player::Damage(double Force){
+    m_Hitpoints -= mo::abs(Force);
+
+    if(m_Hitpoints <= 0)
+        Die();
+}
+
+void player::Die(){
+    UpdateStop();
 
 }
 

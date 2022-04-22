@@ -37,24 +37,111 @@ enemy::enemy(float px, float py, QGraphicsItem *parent)
 
 }
 
-void enemy::Move(float Dt)
-{
+void enemy::Move(float Dt){
+    {/// X
 
+        m_FrictionQD *= onGround();
+        m_FrictionQS *= onGround();
+
+        short modifier = ((m_Sl.first <= 0) * 2) - 1;
+
+        float ma = m_Mass * m_Al.first * onGround();
+        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalAreaX * mo::exp(m_Sl.first, 3) * modifier;
+        float frS = m_Mass * m_Gravity * m_FrictionQS * modifier;
+        float frD = m_Mass * m_Gravity * m_FrictionQD * modifier;
+
+        float ar = ((mo::abs(ma) > mo::abs(frS))) * ((ma - (fd + frD)) / m_Mass);
+        ar = (!ar && m_Sl.first)? ((fd + frD) / m_Mass) : ar;
+
+        if(mo::abs(m_Sl.first) < 0.05f && mo::abs(ar) < 0.01){
+            m_Sl.first = 0;
+            ar = 0;
+        }
+
+        m_Al.first = ar * Dt;
+        m_Sl.first += m_Al.first;
+        setX(x() + m_Sl.first);
+
+        m_FrictionQS = 0.95f;
+        m_FrictionQD = 0.85f;
+
+    }
+    { /// Y
+        short modifier = ((m_Al.second <= 0) * 2) - 1;
+
+        float ma = m_Mass * m_Al.second;
+        float w = m_Mass * m_Gravity;
+        float n = m_Mass * m_Gravity * onGround();
+        float fd = 0.5 * m_DragQ * m_MediumD * m_TransversalAreaY * mo::exp(m_Sl.second, 2) * modifier;
+
+
+        float ar = (ma - fd + w - n) / m_Mass;
+        m_Al.second = ar * Dt;
+        m_Sl.second += m_Al.second;
+
+        if(onGround() && m_Sl.second < 0){
+            setY(y() + m_Sl.second);
+        }
+        else if(!onGround()){
+            setY(y() + m_Sl.second);
+        }
+    }
+    setOnGround(false);
 }
 
-void enemy::Shoot(){
-    if(isShootCooldownActive() || !m_Objective)
-        return;
+void enemy::PorsuitObjective(){
+    if(m_Objective){
+        float distanceX = m_Objective->x() - this->x();
+        float distanceY = m_Objective->y() - this->y();
+        short modifier = ((distanceX >= 0) * 2) - 1;
 
-    float ax = m_Objective->x() - this->x();
-    float ay = m_Objective->y() - this->y();
+        float invMag = mo::invSqrt(mo::exp(distanceX, 2) + mo::exp(distanceY, 2));
+        float distanceMag = mo::oneOver(invMag);
+        float MagX = mo::abs(distanceX * invMag);
+        float MagY = mo::abs(distanceY * invMag);
+
+
+        if(mo::abs(distanceMag) > 800 && mo::abs(distanceMag) < 1500){
+            m_Sl.first += 0.2f * modifier * MagX * onGround();
+        }
+        else if(mo::abs(distanceMag) < 400 * MagY){
+            m_Sl.first -= 0.2f * modifier * MagX * onGround();
+        }
+
+        if(mo::abs(distanceMag) < 1200 && scene()){
+            proyectile *p = Shoot();
+            p? scene()->addItem(p) : void();
+        }
+    }
+}
+
+proyectile *enemy::Shoot(){
+    if(!m_Objective || isShootCooldownActive())
+        return nullptr;
+
+    float modifier = (m_Objective->x() - x() <= 0)? -1 : 1;
+    //float modifierY = (m_Objective->y() - y() < 0)? -1 : 1;
+
+    float ThrowPosX = this->x() + 77 * modifier;
+    float ThrowPosY = this->y() + 90;
+
+    float ObjectivePosX = m_Objective->x() + (10 * modifier * -1);
+    float ObjectivePosY = m_Objective->y() + 90;
+
+    float ax = ObjectivePosX - ThrowPosX;
+    float ay = ObjectivePosY - ThrowPosY;
     float invMag = mo::invSqrt(mo::exp(ax, 2) + mo::exp(ay, 2));
 
-    ax *= invMag * atoi(m_AmmoProperties[1].c_str());
-    ay *= invMag * atoi(m_AmmoProperties[1].c_str());
+    ax = invMag * ax * mo::abs(ax);
+    ay = invMag * ay * mo::abs(ay);
 
     setShootCooldownActive(true);
-    m_Ammo = new proyectile(x(), y(), m_Ammo);
+    auto Temp = new proyectile(ThrowPosX + 10 * modifier, ThrowPosY - 10, m_Ammo);
+    Temp->setLinealAcceleration(ax, ay);
+    Temp->setLinealSpeed(getLinealSpeed().first + ax*0.1f, getLinealSpeed().second + ay*0.1f);
+
+    setShootCooldownActive(true);
+    return Temp;
 }
 
 void enemy::Collition(float OtherMass_, float RestitutionQ_, gvr::vec2d OtherVl_){
@@ -64,7 +151,7 @@ void enemy::Collition(float OtherMass_, float RestitutionQ_, gvr::vec2d OtherVl_
     //gvr::vec2d Pt [[maybe_unused]] = {P1.first + P2.first, P1.second + P2.second};
     float TRQ = RestitutionQ_ * 0.5f;
 
-    gvr::vec2d Vr [[maybe_unused]] = {TRQ * (m_Sl.first - OtherVl_.first), TRQ * (m_Sl.second - OtherVl_.second)};
+    //gvr::vec2d Vr [[maybe_unused]] = {TRQ * (m_Sl.first - OtherVl_.first), TRQ * (m_Sl.second - OtherVl_.second)};
 
     gvr::vec2d U1 = {(((m_Mass - (TRQ * OtherMass_)) * m_Sl.first) - ((TRQ - 1) * OtherMass_* OtherVl_.first)) * mo::oneOver(m_Mass + OtherMass_)
                             , (((m_Mass - (TRQ * OtherMass_)) * m_Sl.second) - ((TRQ - 1) * OtherMass_* OtherVl_.second)) * mo::oneOver(m_Mass + OtherMass_)};
@@ -80,10 +167,11 @@ void enemy::Collition(float ExplotionForce_, gvr::vec2d Pos_){
     float dy = y() - Pos_.second;
 
     float invMag = mo::invSqrt(mo::exp(dx, 2) + mo::exp(dy, 2));
+    float effect = ExplotionForce_ * invMag;
 
-    m_Al.first += ExplotionForce_ / (m_Mass * mo::exp(Pos_.first, 2));
-    m_Al.second += ExplotionForce_ / (m_Mass * mo::exp(Pos_.second, 2));
-    Damage(0.5f * ExplotionForce_ * mo::oneOver(invMag));
+    m_Sl.first += (ExplotionForce_ / mo::exp(dx, 2)) * (dx > 0? 1 : -1);
+    m_Sl.second += ExplotionForce_ / mo::exp(dy, 2) * (dy > 0? 1 : -1);
+    Damage(effect);
 }
 
 bool enemy::onGround(){return m_OnGround;}
@@ -95,9 +183,13 @@ float enemy::getFrictionQS(){return m_FrictionQS;}
 float enemy::getFrictionQD(){return m_FrictionQD;}
 float enemy::getTransversalAreaX(){return m_TransversalAreaX;}
 float enemy::getTransversalAreaY(){return m_TransversalAreaY;}
+float enemy::getHitpoints(){return m_Hitpoints;}
 
 gvr::vec2d enemy::getLinealSpeed(){return m_Sl;}
 gvr::vec2d enemy::getLinealAcceleration(){return m_Al;}
+
+QGraphicsItem *enemy::getObjective(){return m_Objective;}
+proyectile *enemy::getAmmo(){return m_Ammo;}
 
 void enemy::setOnGround(bool State_){
     m_OnGround = State_;
@@ -140,9 +232,15 @@ void enemy::setAmmo(proyectile *Ammo_){
         return;
     }
 
-    m_Ammo = new proyectile("bala normal", "Elba Lazo");
-    // Set default properties
-
+    m_Ammo = new proyectile(":/gfx/Images/WoodBox.png", "Elba Lazo");
+    m_Ammo->setMass(5);
+    m_Ammo->setDragQ(0.02f);
+    m_Ammo->setTransversalArea(0.1f);
+    m_Ammo->setGravity(m_Gravity);
+    m_Ammo->setMediumD(m_MediumD);
+    m_Ammo->setScale(25, 15);
+    m_Ammo->setExplotionCast(nullptr);
+    return;
 }
 
 void enemy::UpdateStart(float ms){m_UpdateTimer->start(ms);}
@@ -183,17 +281,18 @@ void enemy::UpdateTextures(){
 
 }
 void enemy::Damage(double Force){
-    m_Hitpoints -= Force / m_Mass;
+    m_Hitpoints -= Force;
     // if(!m_Hitpoints) Die();
 }
 
 void enemy::Update(){
     //setTransformOriginPoint(x() + pixmap().width() * 0.5, y() - pixmap().height() * 0.5);
-    //Move(0.016f);
+    PorsuitObjective();
+    Move(0.016f);
     if(isShootCooldownActive() && !(--m_RemainingCD)){ // Argument Evaluation Order
         setShootCooldownActive(false);
         m_RemainingCD = 120;
     }
-    if(m_UpdateTextures)
-        UpdateTextures();
+    //if(m_UpdateTextures)
+    //    UpdateTextures();
 }

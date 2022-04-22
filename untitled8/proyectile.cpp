@@ -57,8 +57,11 @@ void proyectile::Move(float Dt){
         m_Sl.second += m_Al.second;
         setY(y() + m_Sl.second);
 
-        if(y() > 2500)
+        if(y() > 2500){
+            UpdateStop();
             delete this;
+            return;
+        }
     }
     { /// X Movement
         short modifier = ((m_Sl.first >= 0) * 2) - 1; // m_Sl.first > 0? 1 : -1;
@@ -76,10 +79,11 @@ QGraphicsItem * proyectile::Collition(){
     if(!getExplotionCast())
         return nullptr;
 
-    auto exp = new explotion(x(), y(), m_ECast);
-    float V = mo::Sqrt(mo::exp(m_Sl.first, 2) + mo::exp(m_Sl.second, 2));
+    auto exp = new explotion(x(), y(), getExplotionCast());
+    float Speed = mo::Sqrt(mo::exp(m_Sl.first, 2) + mo::exp(m_Sl.second, 2));
 
-    exp->setEnergy(0.5f * m_Mass * mo::exp(V, 2));
+    if(!exp->getEnergy())
+        exp->setEnergy(0.5f * m_Mass * mo::exp(Speed, 2));
     //exp.set
 
     return exp;
@@ -90,6 +94,7 @@ float proyectile::getDragQ(){return m_DragQ;}
 float proyectile::getTransversalArea(){return m_TransversalArea;}
 float proyectile::getMediumD(){return m_MediumD;}
 float proyectile::getGravity(){return m_Gravity;}
+float proyectile::getEnergy(){return (0.5f * m_Mass * mo::Sqrt(mo::exp(m_Sl.first, 2) + mo::exp(m_Sl.second, 2)));}
 
 gvr::vec2d proyectile::getScale(){return m_Scale;}
 

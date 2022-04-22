@@ -23,6 +23,7 @@ public:
     float getTransversalArea();
     float getMediumD();
     float getGravity();
+    float getEnergy();
 
     gvr::vec2d getScale();
 

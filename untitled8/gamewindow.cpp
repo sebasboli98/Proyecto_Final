@@ -35,7 +35,7 @@ gamewindow::gamewindow(gvr::udpair playerData_, QWidget *parent) :
 
     p = new player(400, 300);
     p->setTextures(pTextures);
-    p->createProyectileCast(":/gfx/Images/WoodBox.png", "");
+    //p->createProyectileCast(":/gfx/Images/WoodBox.png", "");
     MenuScene->addItem(p);
 
     Test1 = new explotion(":/gfx/Images/rexplotion.png", "");
