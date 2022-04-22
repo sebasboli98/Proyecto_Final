@@ -166,15 +166,13 @@ void registerwindow::on_Continue_clicked()
                         ui->mailbox->text().toStdString() + ";" +
                         "1;0;0");
 
-        // gw = new gamewindow(m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()], this);
-        // gw->show();
-        // this->hide();
+
     }
 
-    /*gw = new gamewindow(m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()], m_usersData);
+    gw = new gamewindow(m_usersData[ui->namebox->text().toStdString() + ui->passbox->text().toStdString()], m_usersData);
     gw->show();
     gw->showMaximized();
-    this->hide();*/
+    this->hide();
 
 }
 

@@ -7,6 +7,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QTimer>
+#include <QPushButton>
 
 #include <queue>
 
@@ -30,14 +31,19 @@ class gamewindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit gamewindow(gvr::udpair playerData_, QWidget *parent = nullptr);
+    explicit gamewindow(gvr::udpair playerData_, gvr::udat allData_, QWidget *parent = nullptr);
     ~gamewindow();
 
 private:
     void keyPressEvent(QKeyEvent *Event);
     void keyReleaseEvent(QKeyEvent * Event);
     void mousePressEvent(QMouseEvent *Event);
-    void mouseMoveEvent(QMouseEvent *Event);
+    void mouseReleaseEvent(QMouseEvent *Event);
+    //void mouseMoveEvent(QMouseEvent *Event);
+
+    void MainMenu();
+    void LoadData();
+    void SaveData();
 
     void LoadTextures();
     void LoadSounds();
@@ -45,6 +51,11 @@ private:
     void AddBlocks();
     void AddEntities();
     void AddPlayer();
+    void AddWidgets();
+
+    void RemoveBlocks();
+    void RemoveEntities();
+    void RemovePlayer();
 
     void enableCollitions();
     void StartCollitions(uint ms);
@@ -54,9 +65,18 @@ private:
     void StartMovement(uint ms);
     void StopMovement();
 
+    void enableClicks();
+    void StartClicks(uint ms);
+    void StopClicks();
+
+private slots:
+    void CampaignButton();
+    void SurvivalButton();
+    void ExitButton();
+
 private:
     Ui::gamewindow *ui;
-    QTimer *m_Collitions;
+    fmanager *m_fmanager;
 
     QGraphicsView *MenuView;
     QGraphicsView *GameView;
@@ -67,17 +87,29 @@ private:
     CustomScene *TexturesScene;
     //QGraphicsView *View;
 
-    bool m_GameRunning;
+    std::vector<QPushButton *>m_Buttons;
+    std::vector<std::string> m_BlockMap;
+    std::vector<std::string> m_EnemyMap;
 
     gvr::udpair m_playerData;
-    player *p;
+    gvr::udat m_allData;
     std::vector<std::pair<std::string, uint>> m_platforms;
     std::vector<std::pair<uint, std::pair<gvr::llint, int>>> m_decorations;
 
-    explotion *Test1;
+    player *m_Player;
+    std::vector<enemy *> m_Enemies;
+    std::vector<block *> m_MovableBlocks;
+    std::vector<block *> m_Blocks;
+    std::vector<checkpoint *> m_Checkpoints;
 
-    std::queue<int> m_keys;
+    std::queue<std::pair<int, bool>> m_keys;
+    std::queue<std::pair<std::pair<int, bool>, gvr::vec2d>> m_Clicks;
+
+    bool m_GameRunning;
     QTimer *m_KeyTimer;
+    QTimer *m_CollitionsTimer;
+    QTimer *m_MouseTimer;
+
 
 };
 
